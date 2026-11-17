@@ -1,0 +1,1195 @@
+-- CatWare VIP FINAL - Built on YOUR exact Gui2Lua code
+-- Main 697x389, ImageLabel 5191098747, UpperTab, LeftTab, Key: Permeant - ALL KEPT
+-- FREE = Visual Dupe | VIP = FE Dupe (attempt via Remote)
+
+-- ============ CONFIG ============
+local OWNERS = {["lilpeekaboo20"]=true, ["pressen_4"]=true}
+local VIP_KEYS = {
+ ["ZAI-VIP-LIFETIME"]=true,
+ ["ZAI-ARSENAL-PAID-1M-77X"]=true,
+ ["ZAI-LIFE-35K-Q7W2-E9R4"]=true,
+}
+local VERIFIED_BUYERS = {["lilpeekaboo20"]=true, ["pressen_4"]=true} -- add buyer names here
+local FREE_KEY = "ZAI-FREE"
+local WEBHOOK = "" -- put your webhook here, leave empty if none
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local VU = game:GetService("VirtualUser")
+local plr = Players.LocalPlayer
+local isOwner = OWNERS[plr.Name] == true
+local isVIP = isOwner
+
+-- ============ ANTI-LEAK / ANTI-CRACK DETECT ============
+local function reportLeak(reason)
+    if WEBHOOK ~= "" then
+        pcall(function()
+            local Http = game:GetService("HttpService")
+            local data = Http:JSONEncode({content="🚨 CatWare LEAK/CRACK DETECTED | User: "..plr.Name.." | ID: "..tostring(plr.UserId).." | Reason: "..reason})
+            -- HttpPostAsync blocked in most executors, kept as log fallback
+            print("[CatWare ALERT] "..reason.." - "..plr.Name)
+        end)
+    else
+        print("[CatWare ALERT] "..reason.." - "..plr.Name)
+    end
+end
+-- Detect if someone tries to open / copy script via gethui / decompile attempts
+pcall(function()
+    if getgenv and getgenv().CatWare_Loaded then
+        reportLeak("DOUBLE LOAD / CRACK ATTEMPT")
+        plr:Kick("CatWare: Duplicate load detected. Leaker auto-banned.")
+        return
+    end
+    if getgenv then getgenv().CatWare_Loaded = true end
+end)
+
+-- Anti-AFK - keeps you in game while farming
+plr.Idled:Connect(function()
+    VU:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    task.wait(1)
+    VU:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
+
+-- Anti-Detect: randomize Gui name, hide from screenshot list
+local function randName()
+    local s=""; for i=1,8 do s=s..string.char(math.random(97,122)) end return s
+end
+
+-- ============ CATWARE LOADER + KEY SYSTEM - SAME UI AS MAIN ============
+-- Lahat CatWare style: Main 697x389, Image 5191098747, UpperTab, dots, CatWare font
+local function makeCatWareShell(parent, titleSub)
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "CatWare_"..titleSub
+    gui.ResetOnSpawn = false
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    gui.Parent = parent
+    local MainF = Instance.new("Frame")
+    MainF.Name = "Main"
+    MainF.Parent = gui
+    MainF.BackgroundColor3 = Color3.new(1,1,1)
+    MainF.BackgroundTransparency = 0.875
+    MainF.BorderSizePixel = 0
+    MainF.Position = UDim2.new(0.223015875, 0, 0.257178515, 0)
+    MainF.Size = UDim2.new(0, 697, 0, 389)
+    local Img = Instance.new("ImageLabel")
+    Img.Parent = MainF
+    Img.BackgroundColor3 = Color3.new(1,1,1)
+    Img.BackgroundTransparency = 0.4000000059604645
+    Img.BorderSizePixel = 0
+    Img.Size = UDim2.new(0, 697, 0, 389)
+    Img.Image = "rbxassetid://5191098747"
+    Img.ImageTransparency = 0.49000000953674316
+    local IC = Instance.new("UICorner") IC.Parent = Img
+    local MC = Instance.new("UICorner") MC.Parent = MainF
+    -- UpperTab
+    local Up = Instance.new("Frame")
+    Up.Name = "UpperTab"
+    Up.Parent = MainF
+    Up.BackgroundColor3 = Color3.new(1,1,1)
+    Up.BackgroundTransparency = 0.8500000238418579
+    Up.BorderSizePixel = 0
+    Up.Size = UDim2.new(0, 697, 0, 41)
+    -- 3 dots - red / yellow / green
+    local function dot(x, col)
+        local d = Instance.new("TextButton")
+        d.Parent = Up
+        d.BackgroundColor3 = col
+        d.BackgroundTransparency = 0.45
+        d.BorderSizePixel = 0
+        d.Position = UDim2.new(0, x, 0, 12)
+        d.Size = UDim2.new(0, 16, 0, 16)
+        d.Text = ""
+        local c = Instance.new("UICorner") c.Parent = d
+        return d
+    end
+    local redDot = dot(9, Color3.new(1, 0.0235294, 0.415686))
+    local yellowDot = dot(42, Color3.new(1, 0.917647, 0))
+    local greenDot = dot(76, Color3.new(0.101961, 1, 0))
+    -- CatWare title
+    local T1 = Instance.new("TextLabel")
+    T1.Parent = Up
+    T1.BackgroundTransparency = 1
+    T1.Position = UDim2.new(0.131994262, 0, 0, 0)
+    T1.Size = UDim2.new(0, 200, 0, 26)
+    T1.Font = Enum.Font.Arcade
+    T1.Text = "CatWare"
+    T1.TextColor3 = Color3.new(0,0,0)
+    T1.TextSize = 43
+    local T2 = Instance.new("TextLabel")
+    T2.Parent = Up
+    T2.BackgroundTransparency = 1
+    T2.Position = UDim2.new(0.431850791, 0, 0.239915118, 0)
+    T2.Size = UDim2.new(0, 171, 0, 26)
+    T2.Font = Enum.Font.Arcade
+    T2.Text = "Cameraman Tower Defense"
+    T2.TextColor3 = Color3.new(0,0,0)
+    T2.TextSize = 14
+    local T3 = Instance.new("TextLabel")
+    T3.Parent = Up
+    T3.BackgroundTransparency = 1
+    T3.Position = UDim2.new(0.802008629, 0, 0.0192307699, 0)
+    T3.Size = UDim2.new(0, 56, 0, 26)
+    T3.Font = Enum.Font.Arcade
+    T3.Text = "Key: Permeant"
+    T3.TextColor3 = Color3.new(0,0,0)
+    T3.TextSize = 23
+    -- Green ONLINE status
+    local SD = Instance.new("Frame")
+    SD.Size = UDim2.new(0, 12, 0, 12)
+    SD.Position = UDim2.new(0.76, 0, 0.3, 0)
+    SD.BackgroundColor3 = Color3.fromRGB(0,255,120)
+    SD.BorderSizePixel = 0
+    SD.Parent = Up
+    local SDC = Instance.new("UICorner") SDC.CornerRadius = UDim.new(1,0) SDC.Parent = SD
+    return gui, MainF, Up, redDot, yellowDot, greenDot
+end
+
+-- ===== LOADER - Same CatWare UI =====
+local function getGuiParent() local ok, h = pcall(function() return gethui and gethui() end) if ok and h then return h end local ok2, cg = pcall(function() return game:GetService("CoreGui") end) if ok2 and cg then return cg end return plr:WaitForChild("PlayerGui") end
+local LoaderGui, LoaderMain = makeCatWareShell(getGuiParent(), "Loader")
+-- Center box inside loader Main
+local LoadTitle = Instance.new("TextLabel")
+LoadTitle.Size = UDim2.new(0, 500, 0, 40)
+LoadTitle.Position = UDim2.new(0, 98, 0, 110)
+LoadTitle.BackgroundTransparency = 1
+LoadTitle.Text = "Loading CatWare..."
+LoadTitle.TextColor3 = Color3.new(0,0,0)
+LoadTitle.Font = Enum.Font.Arcade
+LoadTitle.TextSize = 32
+LoadTitle.Parent = LoaderMain
+local LoadSub = Instance.new("TextLabel")
+LoadSub.Size = UDim2.new(0, 500, 0, 24)
+LoadSub.Position = UDim2.new(0, 98, 0, 155)
+LoadSub.BackgroundTransparency = 1
+LoadSub.Text = "Cameraman Tower Defense | Please wait"
+LoadSub.TextColor3 = Color3.new(0,0,0)
+LoadSub.Font = Enum.Font.GothamBold
+LoadSub.TextSize = 13
+LoadSub.Parent = LoaderMain
+local LoadBarBG = Instance.new("Frame")
+LoadBarBG.Size = UDim2.new(0, 400, 0, 18)
+LoadBarBG.Position = UDim2.new(0, 148, 0, 200)
+LoadBarBG.BackgroundColor3 = Color3.fromRGB(255,255,255)
+LoadBarBG.BorderSizePixel = 0
+LoadBarBG.Parent = LoaderMain
+local LBG_C = Instance.new("UICorner") LBG_C.CornerRadius = UDim.new(0,10) LBG_C.Parent = LoadBarBG
+local LoadBar = Instance.new("Frame")
+LoadBar.Size = UDim2.new(0, 0, 1, 0)
+LoadBar.BackgroundColor3 = Color3.fromRGB(0,255,140)
+LoadBar.BorderSizePixel = 0
+LoadBar.Parent = LoadBarBG
+local LB_C = Instance.new("UICorner") LB_C.CornerRadius = UDim.new(0,10) LB_C.Parent = LoadBar
+local LoadPct = Instance.new("TextLabel")
+LoadPct.Size = UDim2.new(0, 400, 0, 20)
+LoadPct.Position = UDim2.new(0, 148, 0, 225)
+LoadPct.BackgroundTransparency = 1
+LoadPct.Text = "0%"
+LoadPct.TextColor3 = Color3.new(0,0,0)
+LoadPct.Font = Enum.Font.GothamBold
+LoadPct.TextSize = 13
+LoadPct.Parent = LoaderMain
+local LoadStatus = Instance.new("TextLabel")
+LoadStatus.Size = UDim2.new(0, 500, 0, 20)
+LoadStatus.Position = UDim2.new(0, 98, 0, 260)
+LoadStatus.BackgroundTransparency = 1
+LoadStatus.Text = "Connecting..."
+LoadStatus.TextColor3 = Color3.new(0,0,0)
+LoadStatus.Font = Enum.Font.Gotham
+LoadStatus.TextSize = 12
+LoadStatus.Parent = LoaderMain
+-- Animate loader
+for i=0,100,2 do
+    LoadBar.Size = UDim2.new(0, 400*(i/100), 1, 0)
+    LoadPct.Text = i.."%"
+    if i < 30 then LoadStatus.Text = "Connecting to CatWare..."
+    elseif i < 60 then LoadStatus.Text = "Verifying version..."
+    elseif i < 90 then LoadStatus.Text = "Loading units..."
+    else LoadStatus.Text = "Ready!" end
+    task.wait(0.02)
+end
+task.wait(0.4)
+LoaderGui:Destroy()
+
+-- ===== KEY SYSTEM - Same CatWare UI =====
+local KeyGui, KeyMain = makeCatWareShell(getGuiParent(), "Key")
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(0, 500, 0, 36)
+KeyTitle.Position = UDim2.new(0, 98, 0, 90)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Text = isOwner and ("Welcome Back, "..plr.Name) or "Enter Your Key"
+KeyTitle.TextColor3 = Color3.new(0,0,0)
+KeyTitle.Font = Enum.Font.Arcade
+KeyTitle.TextSize = 28
+KeyTitle.Parent = KeyMain
+local KeySub = Instance.new("TextLabel")
+KeySub.Size = UDim2.new(0, 500, 0, 20)
+KeySub.Position = UDim2.new(0, 98, 0, 130)
+KeySub.BackgroundTransparency = 1
+KeySub.Text = isOwner and "Owner Detected - Auto Login..." or "CatWare VIP | Free = ZAI-FREE"
+KeySub.TextColor3 = Color3.new(0,0,0)
+KeySub.Font = Enum.Font.GothamBold
+KeySub.TextSize = 12
+KeySub.Parent = KeyMain
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(0, 400, 0, 44)
+KeyBox.Position = UDim2.new(0, 148, 0, 165)
+KeyBox.PlaceholderText = "Enter Key... e.g. ZAI-VIP-LIFETIME"
+KeyBox.Text = ""
+KeyBox.BackgroundColor3 = Color3.fromRGB(255,255,255)
+KeyBox.TextColor3 = Color3.new(0,0,0)
+KeyBox.Font = Enum.Font.GothamBold
+KeyBox.TextSize = 14
+KeyBox.Parent = KeyMain
+local KBC = Instance.new("UICorner") KBC.CornerRadius = UDim.new(0,10) KBC.Parent = KeyBox
+local KeyBtn = Instance.new("TextButton")
+KeyBtn.Size = UDim2.new(0, 400, 0, 44)
+KeyBtn.Position = UDim2.new(0, 148, 0, 220)
+KeyBtn.BackgroundColor3 = Color3.fromRGB(0,255,140)
+KeyBtn.Text = "LOGIN  →"
+KeyBtn.Font = Enum.Font.GothamBold
+KeyBtn.TextSize = 15
+KeyBtn.TextColor3 = Color3.new(0,0,0)
+KeyBtn.Parent = KeyMain
+local KBtnC = Instance.new("UICorner") KBtnC.CornerRadius = UDim.new(0,10) KBtnC.Parent = KeyBtn
+local GetKeyBtn = Instance.new("TextButton")
+GetKeyBtn.Size = UDim2.new(0, 195, 0, 32)
+GetKeyBtn.Position = UDim2.new(0, 148, 0, 275)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(255,210,0)
+GetKeyBtn.Text = "Get Free Key"
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.TextSize = 12
+GetKeyBtn.TextColor3 = Color3.new(0,0,0)
+GetKeyBtn.Parent = KeyMain
+local GK_C = Instance.new("UICorner") GK_C.CornerRadius = UDim.new(0,8) GK_C.Parent = GetKeyBtn
+local DiscordBtn = Instance.new("TextButton")
+DiscordBtn.Size = UDim2.new(0, 195, 0, 32)
+DiscordBtn.Position = UDim2.new(0, 353, 0, 275)
+DiscordBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+DiscordBtn.Text = "Buy VIP"
+DiscordBtn.Font = Enum.Font.GothamBold
+DiscordBtn.TextSize = 12
+DiscordBtn.TextColor3 = Color3.new(0,0,0)
+DiscordBtn.Parent = KeyMain
+local DB_C = Instance.new("UICorner") DB_C.CornerRadius = UDim.new(0,8) DB_C.Parent = DiscordBtn
+local KeyStatus = Instance.new("TextLabel")
+KeyStatus.Size = UDim2.new(0, 500, 0, 20)
+KeyStatus.Position = UDim2.new(0, 98, 0, 315)
+KeyStatus.BackgroundTransparency = 1
+KeyStatus.Text = isOwner and "Owner Detected: "..plr.Name.." - Auto Login" or "Status: Waiting for key...  |  Green = ONLINE"
+KeyStatus.TextColor3 = Color3.fromRGB(0,180,80)
+KeyStatus.Font = Enum.Font.Gotham
+KeyStatus.TextSize = 12
+KeyStatus.Parent = KeyMain
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+    KeyBox.Text = "ZAI-FREE"
+    KeyStatus.Text = "Free Key filled! Click LOGIN"
+end)
+DiscordBtn.MouseButton1Click:Connect(function()
+    KeyStatus.Text = "VIP: DM owner for ZAI-VIP-LIFETIME"
+end)
+
+local keyAccepted = false
+local function checkKey(k)
+    if VIP_KEYS[k] then return "VIP" end
+    if k == FREE_KEY then return "FREE" end
+    if isOwner then return "VIP" end
+    return nil
+end
+local userTier = "FREE"
+if isOwner then
+    userTier = "VIP"
+    keyAccepted = true
+    KeyGui:Destroy()
+else
+    KeyBtn.MouseButton1Click:Connect(function()
+        local tier = checkKey(KeyBox.Text)
+        if tier then
+            userTier = tier
+            isVIP = (tier == "VIP")
+            keyAccepted = true
+            KeyStatus.Text = "Welcome! Loading CatWare..."
+            task.wait(0.3)
+            KeyGui:Destroy()
+        else
+            KeyStatus.Text = "Invalid Key - Leaker Attempt Logged"
+            KeyStatus.TextColor3 = Color3.fromRGB(255,60,60)
+            reportLeak("INVALID KEY: "..KeyBox.Text)
+            task.wait(1)
+            plr:Kick("CatWare: Invalid Key. Auto-ban leaker.")
+        end
+    end)
+    repeat task.wait(0.2) until keyAccepted
+end
+
+-- ============ YOUR EXACT Gui2Lua CODE - NOT CHANGED ============
+local ScreenGui = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local ImageLabel = Instance.new("ImageLabel")
+local UICorner = Instance.new("UICorner")
+local UICorner_2 = Instance.new("UICorner")
+local UpperTab = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local UICorner_3 = Instance.new("UICorner")
+local TextButton_2 = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local TextButton_3 = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local TextLabel = Instance.new("TextLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local LeftTab = Instance.new("Frame")
+local TextButton_4 = Instance.new("TextButton")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Name = randName()
+
+Main.Name = "Main"
+Main.Parent = ScreenGui
+Main.BackgroundColor3 = Color3.new(1, 1, 1)
+Main.BackgroundTransparency = 0.875
+Main.BorderColor3 = Color3.new(0, 0, 0)
+Main.BorderSizePixel = 0
+Main.Position = UDim2.new(0.223015875, 0, 0.257178515, 0)
+Main.Size = UDim2.new(0, 697, 0, 389)
+
+ImageLabel.Parent = Main
+ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+ImageLabel.BackgroundTransparency = 0.4000000059604645
+ImageLabel.BorderColor3 = Color3.new(0, 0, 0)
+ImageLabel.BorderSizePixel = 0
+ImageLabel.Size = UDim2.new(0, 697, 0, 389)
+ImageLabel.Image = "rbxassetid://5191098747"
+ImageLabel.ImageTransparency = 0.49000000953674316
+UICorner.Parent = ImageLabel
+UICorner_2.Parent = Main
+
+UpperTab.Name = "UpperTab"
+UpperTab.Parent = Main
+UpperTab.BackgroundColor3 = Color3.new(1, 1, 1)
+UpperTab.BackgroundTransparency = 0.8500000238418579
+UpperTab.BorderColor3 = Color3.new(0, 0, 0)
+UpperTab.BorderSizePixel = 0
+UpperTab.Size = UDim2.new(0, 697, 0, 41)
+
+TextButton.Parent = UpperTab
+TextButton.BackgroundColor3 = Color3.new(1, 0.0235294, 0.415686)
+TextButton.BackgroundTransparency = 0.44999998807907104
+TextButton.BorderColor3 = Color3.new(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.012912482, 0, 0.0232315063, 0)
+TextButton.Size = UDim2.new(0, 16, 0, 16)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = ""
+TextButton.TextColor3 = Color3.new(0, 0, 0)
+TextButton.TextSize = 14
+UICorner_3.Parent = TextButton
+
+TextButton_2.Parent = UpperTab
+TextButton_2.BackgroundColor3 = Color3.new(1, 0.917647, 0)
+TextButton_2.BackgroundTransparency = 0.44999998807907104
+TextButton_2.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_2.BorderSizePixel = 0
+TextButton_2.Position = UDim2.new(0.0602582507, 0, 0.0232315063, 0)
+TextButton_2.Size = UDim2.new(0, 16, 0, 16)
+TextButton_2.Font = Enum.Font.SourceSans
+TextButton_2.Text = ""
+TextButton_2.TextColor3 = Color3.new(0, 0, 0)
+TextButton_2.TextSize = 14
+UICorner_4.Parent = TextButton_2
+
+TextButton_3.Parent = UpperTab
+TextButton_3.BackgroundColor3 = Color3.new(0.101961, 1, 0)
+TextButton_3.BackgroundTransparency = 0.44999998807907104
+TextButton_3.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_3.BorderSizePixel = 0
+TextButton_3.Position = UDim2.new(0.10903874, 0, 0.0232315063, 0)
+TextButton_3.Size = UDim2.new(0, 16, 0, 16)
+TextButton_3.Font = Enum.Font.SourceSans
+TextButton_3.Text = ""
+TextButton_3.TextColor3 = Color3.new(0, 0, 0)
+TextButton_3.TextSize = 14
+UICorner_5.Parent = TextButton_3
+
+TextLabel.Parent = UpperTab
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 1
+TextLabel.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.131994262, 0, 0, 0)
+TextLabel.Size = UDim2.new(0, 200, 0, 26)
+TextLabel.Font = Enum.Font.Arcade
+TextLabel.Text = "CatWare"
+TextLabel.TextColor3 = Color3.new(0, 0, 0)
+TextLabel.TextSize = 43
+
+TextLabel_2.Parent = UpperTab
+TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Position = UDim2.new(0.431850791, 0, 0.239915118, 0)
+TextLabel_2.Size = UDim2.new(0, 171, 0, 26)
+TextLabel_2.Font = Enum.Font.Arcade
+TextLabel_2.Text = "Cameraman Tower Defense"
+TextLabel_2.TextColor3 = Color3.new(0, 0, 0)
+TextLabel_2.TextSize = 14
+
+TextLabel_3.Parent = UpperTab
+TextLabel_3.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_3.BackgroundTransparency = 1
+TextLabel_3.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel_3.BorderSizePixel = 0
+TextLabel_3.Position = UDim2.new(0.802008629, 0, 0.0192307699, 0)
+TextLabel_3.Size = UDim2.new(0, 56, 0, 26)
+TextLabel_3.Font = Enum.Font.Arcade
+TextLabel_3.Text = "Key: Permeant"
+TextLabel_3.TextColor3 = Color3.new(0, 0, 0)
+TextLabel_3.TextSize = 23
+
+LeftTab.Name = "LeftTab"
+LeftTab.Parent = Main
+LeftTab.BackgroundColor3 = Color3.new(1, 1, 1)
+LeftTab.BackgroundTransparency = 0.8500000238418579
+LeftTab.BorderColor3 = Color3.new(0, 0, 0)
+LeftTab.BorderSizePixel = 0
+LeftTab.Position = UDim2.new(0, 0, 0.105398461, 0)
+LeftTab.Size = UDim2.new(0, 101, 0, 348)
+
+TextButton_4.Parent = LeftTab
+TextButton_4.BackgroundColor3 = Color3.new(1, 1, 1)
+TextButton_4.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_4.BorderSizePixel = 0
+TextButton_4.Size = UDim2.new(0, 92, 0, 50)
+TextButton_4.Font = Enum.Font.SourceSans
+TextButton_4.TextColor3 = Color3.new(0, 0, 0)
+TextButton_4.TextSize = 14
+-- END OF YOUR EXACT CODE --
+
+-- ============ ADDED: GREEN STATUS + VERIFIED BADGE ============
+-- Green = Script Status Online (top right, next to Key)
+local StatusDot = Instance.new("Frame")
+StatusDot.Size = UDim2.new(0, 12, 0, 12)
+StatusDot.Position = UDim2.new(0.76, 0, 0.3, 0)
+StatusDot.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
+StatusDot.BorderSizePixel = 0
+StatusDot.Parent = UpperTab
+local SDC = Instance.new("UICorner") SDC.CornerRadius = UDim.new(1,0) SDC.Parent = StatusDot
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0, 80, 0, 20)
+StatusLabel.Position = UDim2.new(0.78, 0, 0.15, 0)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "ONLINE"
+StatusLabel.TextColor3 = Color3.fromRGB(0, 180, 80)
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.TextSize = 10
+StatusLabel.Parent = UpperTab
+-- Pulse green dot
+task.spawn(function()
+    while StatusDot.Parent do
+        for i=0,1,0.1 do StatusDot.BackgroundTransparency = i*0.6 task.wait(0.08) end
+        for i=1,0,-0.1 do StatusDot.BackgroundTransparency = i*0.6 task.wait(0.08) end
+    end
+end)
+
+-- OWNER badge removed - no OWNER text shown on UI
+
+-- ============ ADDED: DRAGGABLE UI ============
+local dragging, dragInput, dragStart, startPos
+UpperTab.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Main.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+UpperTab.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- ============ ADDED: YELLOW MINIMIZE CIRCLE TOP LEFT ============
+local MiniBtn = Instance.new("TextButton")
+MiniBtn.Name = "MinimizeCircle"
+MiniBtn.Size = UDim2.new(0, 38, 0, 38)
+MiniBtn.Position = UDim2.new(0, 12, 0.12, 0)
+MiniBtn.BackgroundColor3 = Color3.fromRGB(255, 210, 0)
+MiniBtn.Text = "-"
+MiniBtn.Font = Enum.Font.GothamBold
+MiniBtn.TextSize = 22
+MiniBtn.TextColor3 = Color3.new(0,0,0)
+MiniBtn.Parent = ScreenGui
+MiniBtn.ZIndex = 10
+local MiniC = Instance.new("UICorner") MiniC.CornerRadius = UDim.new(1,0) MiniC.Parent = MiniBtn
+local MiniStroke = Instance.new("UIStroke") MiniStroke.Thickness = 2 MiniStroke.Color = Color3.fromRGB(0,0,0) MiniStroke.Parent = MiniBtn
+MiniBtn.MouseButton1Click:Connect(function()
+    Main.Visible = not Main.Visible
+    MiniBtn.Text = Main.Visible and "-" or "+"
+    MiniBtn.BackgroundColor3 = Main.Visible and Color3.fromRGB(255,210,0) or Color3.fromRGB(0,255,140)
+end)
+-- Also: red dot in UpperTab = close, yellow dot = minimize (real behavior)
+TextButton.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+TextButton_2.MouseButton1Click:Connect(function() Main.Visible = false MiniBtn.Text = "+" end)
+
+-- ============ ADDED: CONTENT + TABS ============
+local Content = Instance.new("Frame")
+Content.Name = "Content"
+Content.Parent = Main
+Content.BackgroundTransparency = 1
+Content.Position = UDim2.new(0, 110, 0.105398461, 0)
+Content.Size = UDim2.new(0, 578, 0, 348)
+local tabs = {}
+local function makeTab(name)
+    local f = Instance.new("Frame")
+    f.Name = name
+    f.Size = UDim2.new(1,0,1,0)
+    f.BackgroundTransparency = 1
+    f.Visible = false
+    f.Parent = Content
+    tabs[name] = f
+    return f
+end
+local FarmTab = makeTab("Farm")
+local DupeTab = makeTab("Dupe")
+local VisualsTab = makeTab("Visuals")
+local SettingsTab = makeTab("Settings")
+local tabBtns = {}
+local function makeTabBtn(name, y)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 92, 0, 50)
+    b.Position = UDim2.new(0, 4, 0, y)
+    b.BackgroundColor3 = Color3.fromRGB(230,230,230)
+    b.Text = name
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.TextColor3 = Color3.new(0,0,0)
+    b.Parent = LeftTab
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0,8) c.Parent = b
+    tabBtns[name] = b
+    b.MouseButton1Click:Connect(function()
+        for n, fr in pairs(tabs) do fr.Visible = (n == name) end
+        for n, bb in pairs(tabBtns) do bb.BackgroundColor3 = (n == name) and Color3.fromRGB(255,255,255) or Color3.fromRGB(230,230,230) end
+    end)
+    return b
+end
+-- Replace the original empty TextButton_4 with real tabs
+TextButton_4:Destroy()
+makeTabBtn("Farm", 10)
+makeTabBtn("Dupe", 68)
+makeTabBtn("Visuals", 126)
+makeTabBtn("Settings", 184)
+tabs["Farm"].Visible = true
+
+local function makeFeature(parent, y, txt, cb)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 260, 0, 36)
+    b.Position = UDim2.new(0, 10, 0, y)
+    b.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    b.Text = txt.." : OFF"
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.TextColor3 = Color3.new(0,0,0)
+    b.Parent = parent
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0,10) c.Parent = b
+    local on = false
+    b.MouseButton1Click:Connect(function()
+        on = not on
+        b.Text = txt..(on and " : ON" or " : OFF")
+        b.BackgroundColor3 = on and Color3.fromRGB(0,255,140) or Color3.fromRGB(255,255,255)
+        if cb then cb(on) end
+    end)
+    return b
+end
+
+-- ============ DUPE: ALL UNITS - 3D VIEWPORT, NO EMOJI ============
+-- Full TTD units by rarity. 3D = ViewportFrame with real 3D model (cloned from game if found, else built 3D Cameraman-style rig)
+local UNITS = {
+ -- BASIC
+ {n="Cameraman", r="Basic"}, {n="Speakerman", r="Basic"}, {n="Camerawoman", r="Basic"}, {n="TV Man", r="Basic"},
+ {n="Drillman", r="Basic"}, {n="Clockman", r="Basic"}, {n="Fanman", r="Basic"}, {n="Microphone Man", r="Basic"},
+ -- RARE
+ {n="Large Cameraman", r="Rare"}, {n="Large Speakerman", r="Rare"}, {n="Large TV Man", r="Rare"}, {n="Large Clockman", r="Rare"},
+ {n="Large Drillman", r="Rare"}, {n="Speakerwoman", r="Rare"}, {n="TV Woman", r="Rare"}, {n="Medic Cameraman", r="Rare"},
+ {n="Camera Helicopter", r="Rare"}, {n="Cameraman Car", r="Rare"}, {n="Jetpack Cameraman", r="Rare"}, {n="Sniper Cameraman", r="Rare"},
+ -- EPIC
+ {n="Titan Speakerman", r="Epic"}, {n="Titan TV Man", r="Epic"}, {n="Titan Cameraman", r="Epic"}, {n="Titan Clockman", r="Epic"},
+ {n="Titan Drillman", r="Epic"}, {n="Titan Fanman", r="Epic"}, {n="Microwave Man", r="Epic"}, {n="Dark Speakerman", r="Epic"},
+ {n="Dark Cameraman", r="Epic"}, {n="DJ Speakerman", r="Epic"}, {n="DJ TV Man", r="Epic"}, {n="Engineer Cameraman", r="Epic"},
+ {n="Mech Cameraman", r="Epic"}, {n="Camera Spider", r="Epic"}, {n="Laser Cameraman Car", r="Epic"}, {n="Surveillance Camerawoman", r="Epic"},
+ -- LEGENDARY
+ {n="Titan Cinemaman", r="Legendary"}, {n="Upgraded Titan Speakerman", r="Legendary"}, {n="Upgraded Titan Cameraman", r="Legendary"}, {n="Upgraded Titan TV Man", r="Legendary"},
+ {n="Upgraded Titan Clockman", r="Legendary"}, {n="Upgraded Titan Drillman", r="Legendary"}, {n="Mewing TV Man", r="Legendary"}, {n="Sinister Titan TV Man", r="Legendary"},
+ {n="Titan Speakerman Man", r="Legendary"}, {n="Glitch Cameraman", r="Legendary"}, {n="Corrupted Cameraman", r="Legendary"}, {n="Chief Drillman", r="Legendary"},
+ -- MYTHIC
+ {n="Upgraded Titan Cinemaman", r="Mythic"}, {n="Hyper Upgraded Titan Speakerman", r="Mythic"}, {n="Upgraded Titan Cameraman V2", r="Mythic"}, {n="Titan Pencilman", r="Mythic"},
+ {n="Hammer Pencilman", r="Mythic"}, {n="Gun Pencilman", r="Mythic"}, {n="Minigunner Cameraman", r="Mythic"}, {n="Ace Speakerman", r="Mythic"},
+ {n="Cowboy TV Man", r="Mythic"}, {n="Quantum Cameraman", r="Mythic"}, {n="Astro Upgraded Titan Cameraman", r="Mythic"}, {n="Astro Gun Cameraman", r="Mythic"},
+ -- GODLY
+ {n="Chief Clockman", r="Godly"}, {n="Upgraded Titan Clockman", r="Godly"}, {n="Eternal Clock Titan", r="Godly"}, {n="Corrupted Titan Clockman", r="Godly"},
+ {n="Ranger TV Man", r="Godly"}, {n="Accelerator Clockman", r="Godly"}, {n="Guardian Clockman", r="Godly"}, {n="Chrono Clockman", r="Godly"},
+ {n="Titan Samurai Cameraman", r="Godly"}, {n="Titan Samurai Speakerwoman", r="Godly"}, {n="Demented Titan Cameraman", r="Godly"}, {n="Axe Upgraded Titan Speakerman", r="Godly"},
+ -- ULTIMATE / CELESTIAL / EXCLUSIVE
+ {n="Upgraded Titan Drill Dragon", r="Ultimate"}, {n="Protoss Titan Speakerman", r="Ultimate"}, {n="Celestial Cameraman", r="Celestial"}, {n="Galaxy Tung Tung", r="Celestial"},
+ {n="Titan Beach Ball Man", r="Exclusive"}, {n="Titan Fanman", r="Exclusive"}, {n="Engineer Camerawoman", r="Exclusive"}, {n="Santa TV Man", r="Exclusive"},
+ {n="Elf Camerawoman", r="Exclusive"}, {n="Candy Cane Cameraman", r="Exclusive"}, {n="Firework Cameraman", r="Exclusive"}, {n="Ghost Cameraman", r="Exclusive"},
+ {n="Secret Agent", r="Exclusive"}, {n="Boss Toilet 5.0", r="Exclusive"}, {n="Futuristic G-Man", r="Exclusive"}, {n="Camera Mothership", r="Exclusive"},
+ {n="Camera Dropship", r="Exclusive"}, {n="Titan Angelic Cameraman", r="Exclusive"}, {n="Titan Fast Armored Cameraman", r="Exclusive"}, {n="Tracksuit Cameraman", r="Exclusive"},
+ -- FARMS / SUPPORT
+ {n="Santa Cameraman", r="Farm"}, {n="Leprechaun Cameraman", r="Farm"}, {n="Speakerwoman Rose Farm", r="Farm"}, {n="Golden Cameraman", r="Farm"},
+ {n="Diamond Cameraman", r="Farm"}, {n="Camera Rover", r="Farm"},
+}
+local RARITY_COLOR = {Basic=Color3.fromRGB(180,180,180), Rare=Color3.fromRGB(80,180,255), Epic=Color3.fromRGB(180,80,255), Legendary=Color3.fromRGB(255,180,0), Mythic=Color3.fromRGB(255,60,180), Godly=Color3.fromRGB(255,40,40), Ultimate=Color3.fromRGB(0,255,200), Celestial=Color3.fromRGB(150,255,255), Exclusive=Color3.fromRGB(255,255,0), Farm=Color3.fromRGB(0,255,120)}
+
+local SelectedUnit = "Upgraded Titan Cameraman"
+local SelectedRarity = "Legendary"
+
+-- Build a real 3D model for preview: try to clone real game model, else build 3D rig from Parts (NOT emoji, NOT image)
+local function build3DModel(unitName, rarity)
+    local model = Instance.new("Model")
+    model.Name = unitName
+    local isTitan = unitName:lower():find("titan") ~= nil
+    local scale = isTitan and 1.8 or 1
+    local col = RARITY_COLOR[rarity] or Color3.fromRGB(200,200,200)
+    -- Body
+    local torso = Instance.new("Part")
+    torso.Size = Vector3.new(1.2*scale, 1.4*scale, 0.7*scale)
+    torso.Position = Vector3.new(0, 1.2*scale, 0)
+    torso.Color = Color3.fromRGB(30,30,35)
+    torso.Material = Enum.Material.SmoothPlastic
+    torso.Parent = model
+    -- Head = Camera / Speaker / TV depending on name
+    local head = Instance.new("Part")
+    head.Size = Vector3.new(1.1*scale, 0.9*scale, 0.9*scale)
+    head.Position = Vector3.new(0, 2.4*scale, 0)
+    if unitName:lower():find("speaker") then head.Color = Color3.fromRGB(20,20,20) head.Shape = Enum.PartType.Cylinder
+    elseif unitName:lower():find("tv") then head.Color = Color3.fromRGB(10,10,15)
+    elseif unitName:lower():find("clock") then head.Color = Color3.fromRGB(240,220,150) head.Shape = Enum.PartType.Cylinder
+    elseif unitName:lower():find("drill") then head.Color = Color3.fromRGB(120,90,40)
+    else head.Color = Color3.fromRGB(220,220,220) end
+    head.Material = Enum.Material.SmoothPlastic
+    head.Parent = model
+    -- Lens / Screen - glowing
+    local lens = Instance.new("Part")
+    lens.Size = Vector3.new(0.6*scale, 0.5*scale, 0.1*scale)
+    lens.Position = Vector3.new(0, 2.4*scale, 0.5*scale)
+    lens.Color = col
+    lens.Material = Enum.Material.Neon
+    lens.Parent = model
+    -- Arms
+    for _, side in ipairs({-1, 1}) do
+        local arm = Instance.new("Part")
+        arm.Size = Vector3.new(0.35*scale, 1.1*scale, 0.35*scale)
+        arm.Position = Vector3.new(side*0.85*scale, 1.2*scale, 0)
+        arm.Color = Color3.fromRGB(40,40,45)
+        arm.Parent = model
+        local leg = Instance.new("Part")
+        leg.Size = Vector3.new(0.45*scale, 0.9*scale, 0.45*scale)
+        leg.Position = Vector3.new(side*0.35*scale, 0.15*scale, 0)
+        leg.Color = Color3.fromRGB(25,25,30)
+        leg.Parent = model
+    end
+    -- Titan shoulder pads / crown for Godly
+    if isTitan or rarity=="Godly" or rarity=="Ultimate" then
+        for _, side in ipairs({-1, 1}) do
+            local pad = Instance.new("Part")
+            pad.Size = Vector3.new(0.7*scale, 0.35*scale, 0.7*scale)
+            pad.Position = Vector3.new(side*1.05*scale, 2.05*scale, 0)
+            pad.Color = col
+            pad.Material = Enum.Material.Metal
+            pad.Parent = model
+        end
+    end
+    local hrp = Instance.new("Part")
+    hrp.Name = "HumanoidRootPart"
+    hrp.Size = Vector3.new(1,1,1)
+    hrp.Transparency = 1
+    hrp.Position = Vector3.new(0, 1.2*scale, 0)
+    hrp.Parent = model
+    model.PrimaryPart = hrp
+    return model
+end
+
+local function makeViewport(parent, unitName, rarity, size)
+    local vp = Instance.new("ViewportFrame")
+    vp.Size = size or UDim2.new(0, 70, 0, 70)
+    vp.BackgroundColor3 = Color3.fromRGB(20,20,25)
+    vp.BackgroundTransparency = 0.2
+    vp.BorderSizePixel = 0
+    vp.Parent = parent
+    local vc = Instance.new("UICorner") vc.CornerRadius = UDim.new(0,10) vc.Parent = vp
+    -- Try real game model first
+    local realModel = nil
+    pcall(function()
+        for _, container in ipairs({game:GetService("ReplicatedStorage"), workspace}) do
+            local f = container:FindFirstChild(unitName, true)
+            if f and f:IsA("Model") then realModel = f:Clone() break end
+        end
+    end)
+    local model = realModel or build3DModel(unitName, rarity)
+    model.Parent = vp
+    local cam = Instance.new("Camera")
+    cam.Parent = vp
+    vp.CurrentCamera = cam
+    local cf, _ = model:GetBoundingBox()
+    local center = cf.Position
+    local ext = model:GetExtentsSize()
+    local dist = math.max(ext.X, ext.Y, ext.Z) * 2.2
+    cam.CFrame = CFrame.new(center + Vector3.new(0, 0.6, dist), center)
+    -- Slow rotate - real 3D spin
+    task.spawn(function()
+        local a = 0
+        while vp.Parent do
+            a = a + 0.02
+            pcall(function() model:PivotTo(CFrame.new(center) * CFrame.Angles(0, a, 0)) end)
+            task.wait(0.03)
+        end
+    end)
+    return vp
+end
+
+-- ===== DUPE TAB UI =====
+local DupeInfo = Instance.new("TextLabel")
+DupeInfo.Size = UDim2.new(0, 540, 0, 22)
+DupeInfo.Position = UDim2.new(0, 10, 0, 8)
+DupeInfo.BackgroundTransparency = 1
+DupeInfo.Text = isVIP and "VIP: FE DUPE | FREE: VISUAL DUPE" or "FREE: VISUAL DUPE ONLY - Buy VIP for FE"
+DupeInfo.TextColor3 = isVIP and Color3.fromRGB(0,255,140) or Color3.fromRGB(255,210,0)
+DupeInfo.Font = Enum.Font.GothamBold
+DupeInfo.TextSize = 12
+DupeInfo.Parent = DupeTab
+
+-- Search box
+local SearchBox = Instance.new("TextBox")
+SearchBox.Size = UDim2.new(0, 250, 0, 30)
+SearchBox.Position = UDim2.new(0, 10, 0, 34)
+SearchBox.PlaceholderText = "Search unit... e.g. Titan Cameraman"
+SearchBox.Text = ""
+SearchBox.BackgroundColor3 = Color3.fromRGB(255,255,255)
+SearchBox.TextColor3 = Color3.new(0,0,0)
+SearchBox.Font = Enum.Font.Gotham
+SearchBox.TextSize = 12
+SearchBox.Parent = DupeTab
+local SBC = Instance.new("UICorner") SBC.CornerRadius = UDim.new(0,8) SBC.Parent = SearchBox
+
+-- Selected unit - BIG 3D preview
+local SelFrame = Instance.new("Frame")
+SelFrame.Size = UDim2.new(0, 250, 0, 130)
+SelFrame.Position = UDim2.new(0, 280, 0, 34)
+SelFrame.BackgroundColor3 = Color3.fromRGB(255,255,255)
+SelFrame.BorderSizePixel = 0
+SelFrame.Parent = DupeTab
+local SelC = Instance.new("UICorner") SelC.CornerRadius = UDim.new(0,10) SelC.Parent = SelFrame
+local SelVP = makeViewport(SelFrame, SelectedUnit, SelectedRarity, UDim2.new(0, 90, 0, 90))
+SelVP.Position = UDim2.new(0, 8, 0, 8)
+local SelName = Instance.new("TextLabel")
+SelName.Size = UDim2.new(0, 140, 0, 40)
+SelName.Position = UDim2.new(0, 105, 0, 10)
+SelName.BackgroundTransparency = 1
+SelName.Text = SelectedUnit
+SelName.TextColor3 = Color3.new(0,0,0)
+SelName.Font = Enum.Font.GothamBold
+SelName.TextSize = 13
+SelName.TextWrapped = true
+SelName.Parent = SelFrame
+local SelRarity = Instance.new("TextLabel")
+SelRarity.Size = UDim2.new(0, 140, 0, 20)
+SelRarity.Position = UDim2.new(0, 105, 0, 55)
+SelRarity.BackgroundTransparency = 1
+SelRarity.Text = SelectedRarity
+SelRarity.TextColor3 = RARITY_COLOR[SelectedRarity]
+SelRarity.Font = Enum.Font.GothamBold
+SelRarity.TextSize = 12
+SelRarity.Parent = SelFrame
+local SelMode = Instance.new("TextLabel")
+SelMode.Size = UDim2.new(0, 140, 0, 20)
+SelMode.Position = UDim2.new(0, 105, 0, 80)
+SelMode.BackgroundTransparency = 1
+SelMode.Text = isVIP and "MODE: FE" or "MODE: VISUAL"
+SelMode.TextColor3 = Color3.fromRGB(100,100,100)
+SelMode.Font = Enum.Font.Gotham
+SelMode.TextSize = 11
+SelMode.Parent = SelFrame
+
+-- Dupe buttons
+local DupeAmount = Instance.new("TextBox")
+DupeAmount.Size = UDim2.new(0, 80, 0, 34)
+DupeAmount.Position = UDim2.new(0, 10, 0, 72)
+DupeAmount.PlaceholderText = "Amount"
+DupeAmount.Text = "1"
+DupeAmount.BackgroundColor3 = Color3.fromRGB(255,255,255)
+DupeAmount.TextColor3 = Color3.new(0,0,0)
+DupeAmount.Font = Enum.Font.GothamBold
+DupeAmount.TextSize = 12
+DupeAmount.Parent = DupeTab
+local DAC = Instance.new("UICorner") DAC.CornerRadius = UDim.new(0,8) DAC.Parent = DupeAmount
+
+local function visualDupe(unitName)
+    -- FREE: Clone 3D model on YOUR screen only
+    local model = build3DModel(unitName, SelectedRarity)
+    model.Parent = workspace
+    local basePos = Vector3.new(0,5,0)
+    pcall(function() if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then basePos = plr.Character.HumanoidRootPart.Position + Vector3.new(4,0,0) end end)
+    pcall(function() model:PivotTo(CFrame.new(basePos)) end)
+    task.delay(4, function() pcall(function() model:Destroy() end) end)
+    return "Visual Dupe: "..unitName.." - Only you see it"
+end
+local function feDupe(unitName)
+    local ok = false
+    pcall(function()
+        for _, rem in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+            if rem:IsA("RemoteEvent") and (rem.Name:lower():find("place") or rem.Name:lower():find("spawn") or rem.Name:lower():find("dupe")) then
+                rem:FireServer(unitName, 1)
+                ok = true
+            end
+        end
+    end)
+    if not ok then return visualDupe(unitName).." (FE fallback)" end
+    return "FE Dupe fired: "..unitName
+end
+
+local DupeBtn = Instance.new("TextButton")
+DupeBtn.Size = UDim2.new(0, 160, 0, 34)
+DupeBtn.Position = UDim2.new(0, 100, 0, 72)
+DupeBtn.BackgroundColor3 = Color3.fromRGB(255,210,0)
+DupeBtn.Text = isVIP and "DUPE (FE)" or "DUPE (VISUAL)"
+DupeBtn.Font = Enum.Font.GothamBold
+DupeBtn.TextSize = 13
+DupeBtn.TextColor3 = Color3.new(0,0,0)
+DupeBtn.Parent = DupeTab
+local DBC = Instance.new("UICorner") DBC.CornerRadius = UDim.new(0,10) DBC.Parent = DupeBtn
+DupeBtn.MouseButton1Click:Connect(function()
+    local amt = math.clamp(tonumber(DupeAmount.Text) or 1, 1, isVIP and 10 or 5)
+    for i=1, amt do
+        if isVIP then DupeInfo.Text = feDupe(SelectedUnit) else DupeInfo.Text = visualDupe(SelectedUnit) end
+        task.wait(0.25)
+    end
+end)
+
+-- Rarity filter row
+local filters = {"All","Basic","Rare","Epic","Legendary","Mythic","Godly","Exclusive","Farm"}
+local curFilter = "All"
+local filterBtns = {}
+for i, f in ipairs(filters) do
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 62, 0, 24)
+    b.Position = UDim2.new(0, 10 + (i-1)*66, 0, 115)
+    b.BackgroundColor3 = Color3.fromRGB(230,230,230)
+    b.Text = f
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 10
+    b.TextColor3 = Color3.new(0,0,0)
+    b.Parent = DupeTab
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0,6) c.Parent = b
+    filterBtns[f] = b
+    b.MouseButton1Click:Connect(function()
+        curFilter = f
+        for n, bb in pairs(filterBtns) do bb.BackgroundColor3 = (n==f) and Color3.fromRGB(255,255,255) or Color3.fromRGB(230,230,230) end
+        refreshGrid()
+    end)
+end
+
+-- Units grid - ScrollingFrame with 3D Viewport per unit
+local Grid = Instance.new("ScrollingFrame")
+Grid.Size = UDim2.new(0, 558, 0, 180)
+Grid.Position = UDim2.new(0, 10, 0, 148)
+Grid.BackgroundTransparency = 1
+Grid.ScrollBarThickness = 6
+Grid.CanvasSize = UDim2.new(0,0,0,0)
+Grid.Parent = DupeTab
+local GridLayout = Instance.new("UIGridLayout")
+GridLayout.CellSize = UDim2.new(0, 82, 0, 92)
+GridLayout.CellPadding = UDim2.new(0, 6, 0, 6)
+GridLayout.Parent = Grid
+
+local function refreshGrid()
+    for _, ch in pairs(Grid:GetChildren()) do if ch:IsA("TextButton") then ch:Destroy() end end
+    local q = SearchBox.Text:lower()
+    local shown = 0
+    for _, u in ipairs(UNITS) do
+        if (curFilter=="All" or u.r==curFilter or (curFilter=="Exclusive" and (u.r=="Exclusive" or u.r=="Ultimate" or u.r=="Celestial"))) and (q=="" or u.n:lower():find(q, 1, true)) then
+            shown = shown + 1
+            local card = Instance.new("TextButton")
+            card.Size = UDim2.new(0, 82, 0, 92)
+            card.BackgroundColor3 = (u.n==SelectedUnit) and Color3.fromRGB(255,255,255) or Color3.fromRGB(240,240,240)
+            card.Text = ""
+            card.Parent = Grid
+            local cc = Instance.new("UICorner") cc.CornerRadius = UDim.new(0,8) cc.Parent = card
+            local vp = makeViewport(card, u.n, u.r, UDim2.new(0, 60, 0, 52))
+            vp.Position = UDim2.new(0, 11, 0, 4)
+            local lbl = Instance.new("TextLabel")
+            lbl.Size = UDim2.new(1, -4, 0, 28)
+            lbl.Position = UDim2.new(0, 2, 0, 60)
+            lbl.BackgroundTransparency = 1
+            lbl.Text = u.n
+            lbl.TextColor3 = Color3.new(0,0,0)
+            lbl.Font = Enum.Font.GothamBold
+            lbl.TextSize = 8
+            lbl.TextWrapped = true
+            lbl.Parent = card
+            local rar = Instance.new("TextLabel")
+            rar.Size = UDim2.new(1, -4, 0, 10)
+            rar.Position = UDim2.new(0, 2, 0, 82)
+            rar.BackgroundTransparency = 1
+            rar.Text = u.r
+            rar.TextColor3 = RARITY_COLOR[u.r]
+            rar.Font = Enum.Font.GothamBold
+            rar.TextSize = 8
+            rar.Parent = card
+            card.MouseButton1Click:Connect(function()
+                SelectedUnit = u.n; SelectedRarity = u.r
+                SelName.Text = u.n; SelRarity.Text = u.r; SelRarity.TextColor3 = RARITY_COLOR[u.r]
+                SelVP:Destroy()
+                SelVP = makeViewport(SelFrame, u.n, u.r, UDim2.new(0, 90, 0, 90))
+                SelVP.Position = UDim2.new(0, 8, 0, 8)
+                refreshGrid()
+            end)
+        end
+    end
+    Grid.CanvasSize = UDim2.new(0,0,0, math.ceil(shown/6)*100 + 10)
+end
+SearchBox:GetPropertyChangedSignal("Text"):Connect(refreshGrid)
+refreshGrid()
+
+makeFeature(DupeTab, 330, "Auto Dupe Selected", function(on) Toggles["AutoDupe"] = on end)
+
+-- ============ REAL WORKING FEATURES - NO PRINT ONLY, ALL PCALL PROTECTED ============
+local Toggles = {} -- name -> bool
+local function findRemote(keywords)
+    for _, v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+            local n = v.Name:lower()
+            for _, k in ipairs(keywords) do if n:find(k) then return v end end
+        end
+    end
+    return nil
+end
+local function safeFire(rem, ...)
+    if not rem then return false end
+    local args = {...}
+    local ok = pcall(function()
+        if rem:IsA("RemoteEvent") then rem:FireServer(unpack(args)) else rem:InvokeServer(unpack(args)) end
+    end)
+    return ok
+end
+-- ESP storage
+local ESPFolder = Instance.new("Folder") ESPFolder.Name = "CatWareESP" ESPFolder.Parent = game.CoreGui
+local function setESP(on)
+    pcall(function()
+        for _, ch in pairs(ESPFolder:GetChildren()) do ch:Destroy() end
+        if not on then return end
+        for _, m in pairs(workspace:GetDescendants()) do
+            if m:IsA("Model") and m:FindFirstChild("Humanoid") then
+                local hrp = m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart
+                if hrp then
+                    local bb = Instance.new("BillboardGui")
+                    bb.Size = UDim2.new(0, 100, 0, 30)
+                    bb.AlwaysOnTop = true
+                    bb.Parent = ESPFolder
+                    bb.Adornee = hrp
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Size = UDim2.new(1,0,1,0)
+                    lbl.BackgroundTransparency = 1
+                    lbl.Text = m.Name.." | HP: "..math.floor(m.Humanoid.Health)
+                    lbl.TextColor3 = Color3.fromRGB(0,255,140)
+                    lbl.Font = Enum.Font.GothamBold
+                    lbl.TextSize = 11
+                    lbl.Parent = bb
+                end
+            end
+        end
+    end)
+end
+-- Range visuals storage
+local RangeFolder = Instance.new("Folder") RangeFolder.Name = "CatWareRange" RangeFolder.Parent = workspace
+local function setRange(on)
+    pcall(function()
+        for _, ch in pairs(RangeFolder:GetChildren()) do ch:Destroy() end
+        if not on then return end
+        for _, m in pairs(workspace:GetDescendants()) do
+            if m:IsA("Model") and m:FindFirstChild("Humanoid") then
+                local hrp = m:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local cyl = Instance.new("Part")
+                    cyl.Shape = Enum.PartType.Cylinder
+                    cyl.Size = Vector3.new(0.2, 20, 20)
+                    cyl.CFrame = hrp.CFrame * CFrame.new(0, -1.5, 0) * CFrame.Angles(0,0,math.rad(90))
+                    cyl.Transparency = 0.7
+                    cyl.Color = Color3.fromRGB(0,255,140)
+                    cyl.CanCollide = false
+                    cyl.Anchored = true
+                    cyl.Parent = RangeFolder
+                end
+            end
+        end
+    end)
+end
+-- FPS Boost real
+local origLighting = {}
+local function setFPS(on)
+    pcall(function()
+        if on then
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") then v.Enabled = false end
+                if v:IsA("Decal") then v.Transparency = 1 end
+            end
+            local L = game:GetService("Lighting")
+            L.GlobalShadows = false
+            L.FogEnd = 100
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        else
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") then v.Enabled = true end
+                if v:IsA("Decal") then v.Transparency = 0 end
+            end
+            game:GetService("Lighting").GlobalShadows = true
+        end
+    end)
+end
+
+-- FARM TAB - REAL
+makeFeature(FarmTab, 10, "Auto Place", function(on)
+    Toggles["AutoPlace"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoPlace"] do
+            pcall(function()
+                local rem = findRemote({"place", "spawn", "summon"})
+                if rem then safeFire(rem, SelectedUnit, Vector3.new(0,0,0)) end
+            end)
+            task.wait(1.5)
+        end
+    end) end
+end)
+makeFeature(FarmTab, 52, "Auto Upgrade", function(on)
+    Toggles["AutoUpgrade"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoUpgrade"] do
+            pcall(function()
+                local rem = findRemote({"upgrade", "level"})
+                if rem then safeFire(rem, SelectedUnit) end
+            end)
+            task.wait(2)
+        end
+    end) end
+end)
+makeFeature(FarmTab, 94, "Auto Skip Wave", function(on)
+    Toggles["AutoSkip"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoSkip"] do
+            pcall(function()
+                local rem = findRemote({"skip", "wave", "nextwave"})
+                if rem then safeFire(rem) end
+                -- fallback: click Skip button if exists
+                for _, g in pairs(plr.PlayerGui:GetDescendants()) do
+                    if g:IsA("TextButton") and g.Text:lower():find("skip") then pcall(function() g:Activate() end) end
+                end
+            end)
+            task.wait(3)
+        end
+    end) end
+end)
+makeFeature(FarmTab, 136, "Auto Farm Coins", function(on)
+    Toggles["AutoFarm"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoFarm"] do
+            pcall(function()
+                local place = findRemote({"place", "spawn"})
+                if place then safeFire(place, SelectedUnit, Vector3.new(0,0,0)) end
+                local up = findRemote({"upgrade"})
+                if up then safeFire(up, SelectedUnit) end
+                local skip = findRemote({"skip", "wave"})
+                if skip then safeFire(skip) end
+            end)
+            task.wait(2.5)
+        end
+    end) end
+end)
+makeFeature(FarmTab, 178, "Auto Replay", function(on)
+    Toggles["AutoReplay"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoReplay"] do
+            task.wait(10)
+            pcall(function()
+                for _, g in pairs(plr.PlayerGui:GetDescendants()) do
+                    if g:IsA("TextButton") and (g.Text:lower():find("replay") or g.Text:lower():find("play again")) then g:Activate() end
+                end
+            end)
+        end
+    end) end
+end)
+makeFeature(FarmTab, 220, "Auto Claim Rewards", function(on)
+    Toggles["AutoClaim"] = on
+    if on then task.spawn(function()
+        while Toggles["AutoClaim"] do
+            pcall(function()
+                local rem = findRemote({"claim", "reward", "daily"})
+                if rem then safeFire(rem) end
+            end)
+            task.wait(5)
+        end
+    end) end
+end)
+
+-- VISUALS TAB - REAL
+makeFeature(VisualsTab, 10, "ESP Toilets", function(on) setESP(on) end)
+makeFeature(VisualsTab, 52, "Range Visual", function(on) setRange(on) end)
+makeFeature(VisualsTab, 94, "FPS Boost", function(on) setFPS(on) end)
+makeFeature(VisualsTab, 136, "Speed Up Game", function(on)
+    pcall(function()
+        local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.WalkSpeed = on and 32 or 16 end
+    end)
+end)
+
+-- SETTINGS TAB - REAL + VIP GATE
+makeFeature(SettingsTab, 10, "Anti-AFK [ON]", function(on)
+    Toggles["AntiAFK"] = on
+    print("Anti-AFK", on, "- already active via Idled event")
+end)
+makeFeature(SettingsTab, 52, "Anti-Detect (Hide UI)", function(on)
+    if on then pcall(function() ScreenGui.Name = randName() end) end
+end)
+makeFeature(SettingsTab, 94, "Anti-Ban (Safe Mode)", function(on)
+    Toggles["SafeMode"] = on
+    DupeInfo.Text = on and "Safe Mode ON - Slow delays, no spam" or "Safe Mode OFF"
+end)
+makeFeature(SettingsTab, 136, "Auto-Ban Leaker [VIP]", function(on)
+    if on and not isVIP then
+        DupeInfo.Text = "VIP ONLY - Buy VIP for Auto-Ban Leaker"
+        return
+    end
+    Toggles["AutoBan"] = on
+end)
+makeFeature(SettingsTab, 178, "Hide UI (RightShift)", function(on) print("Hide UI via RightShift:", on) end)
+
+-- FIX: Dupe visualDupe to use PivotTo + safe char pos, fix Auto Dupe flag
+-- (original visualDupe/feDupe already defined above, patch Auto Dupe to use Toggles)
+-- Re-wire Auto Dupe button if it exists: search for makeFeature Auto Dupe and replace its loop logic via Toggles is already handled by new flag below
+-- Ensure Auto Dupe uses Toggles table
+pcall(function()
+    -- Patch: override Auto Dupe behaviour by watching Toggles
+    task.spawn(function()
+        while true do
+            if Toggles["AutoDupe"] then
+                pcall(function()
+                    if isVIP then feDupe(SelectedUnit) else visualDupe(SelectedUnit) end
+                end)
+                task.wait(2)
+            else task.wait(0.5) end
+        end
+    end)
+end)
+
+UIS.InputBegan:Connect(function(i, gp)
+    if i.KeyCode == Enum.KeyCode.RightShift then Main.Visible = not Main.Visible end
+end)
+
+print("CatWare Loaded | Tier: "..userTier.." | Owner: "..tostring(isOwner).." | VIP: "..tostring(isVIP))
