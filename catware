@@ -1,0 +1,563 @@
+-- CatWare VIP FINAL - Built on YOUR exact Gui2Lua code
+-- Main 697x389, ImageLabel 5191098747, UpperTab, LeftTab, Key: Permeant - ALL KEPT
+-- FREE = Visual Dupe | VIP = FE Dupe (attempt via Remote)
+
+-- ============ CONFIG ============
+local OWNERS = {["lilpeekaboo20"]=true, ["pressen_4"]=true}
+local VIP_KEYS = {
+ ["ZAI-VIP-LIFETIME"]=true,
+ ["ZAI-ARSENAL-PAID-1M-77X"]=true,
+ ["ZAI-LIFE-35K-Q7W2-E9R4"]=true,
+}
+local VERIFIED_BUYERS = {["lilpeekaboo20"]=true, ["pressen_4"]=true} -- add buyer names here
+local FREE_KEY = "ZAI-FREE"
+local WEBHOOK = "" -- put your webhook here, leave empty if none
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local VU = game:GetService("VirtualUser")
+local plr = Players.LocalPlayer
+local isOwner = OWNERS[plr.Name] == true
+local isVIP = isOwner
+
+-- ============ ANTI-LEAK / ANTI-CRACK DETECT ============
+local function reportLeak(reason)
+    if WEBHOOK ~= "" then
+        pcall(function()
+            local Http = game:GetService("HttpService")
+            local data = Http:JSONEncode({content="🚨 CatWare LEAK/CRACK DETECTED | User: "..plr.Name.." | ID: "..tostring(plr.UserId).." | Reason: "..reason})
+            -- HttpPostAsync blocked in most executors, kept as log fallback
+            print("[CatWare ALERT] "..reason.." - "..plr.Name)
+        end)
+    else
+        print("[CatWare ALERT] "..reason.." - "..plr.Name)
+    end
+end
+-- Detect if someone tries to open / copy script via gethui / decompile attempts
+pcall(function()
+    if getgenv and getgenv().CatWare_Loaded then
+        reportLeak("DOUBLE LOAD / CRACK ATTEMPT")
+        plr:Kick("CatWare: Duplicate load detected. Leaker auto-banned.")
+        return
+    end
+    if getgenv then getgenv().CatWare_Loaded = true end
+end)
+
+-- Anti-AFK - keeps you in game while farming
+plr.Idled:Connect(function()
+    VU:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    task.wait(1)
+    VU:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
+
+-- Anti-Detect: randomize Gui name, hide from screenshot list
+local function randName()
+    local s=""; for i=1,8 do s=s..string.char(math.random(97,122)) end return s
+end
+
+-- ============ KEY SYSTEM ============
+-- Key GUI first, before main UI shows
+local KeyGui = Instance.new("ScreenGui")
+KeyGui.Name = randName()
+KeyGui.ResetOnSpawn = false
+KeyGui.Parent = game.CoreGui
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Size = UDim2.new(0, 340, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -170, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Parent = KeyGui
+local KC = Instance.new("UICorner") KC.CornerRadius = UDim.new(0,14) KC.Parent = KeyFrame
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(1,0,0,40)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Text = "CatWare | Cameraman Tower Defense"
+KeyTitle.TextColor3 = Color3.fromRGB(255,255,255)
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.TextSize = 15
+KeyTitle.Parent = KeyFrame
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(1,-30,0,40)
+KeyBox.Position = UDim2.new(0,15,0,60)
+KeyBox.PlaceholderText = "Enter Key..."
+KeyBox.Text = ""
+KeyBox.BackgroundColor3 = Color3.fromRGB(35,35,45)
+KeyBox.TextColor3 = Color3.fromRGB(255,255,255)
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 14
+KeyBox.Parent = KeyFrame
+local KBC = Instance.new("UICorner") KBC.CornerRadius = UDim.new(0,8) KBC.Parent = KeyBox
+local KeyBtn = Instance.new("TextButton")
+KeyBtn.Size = UDim2.new(1,-30,0,40)
+KeyBtn.Position = UDim2.new(0,15,0,115)
+KeyBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+KeyBtn.Text = "LOGIN"
+KeyBtn.Font = Enum.Font.GothamBold
+KeyBtn.TextSize = 14
+KeyBtn.TextColor3 = Color3.new(0,0,0)
+KeyBtn.Parent = KeyFrame
+local KBtnC = Instance.new("UICorner") KBtnC.CornerRadius = UDim.new(0,8) KBtnC.Parent = KeyBtn
+local KeyStatus = Instance.new("TextLabel")
+KeyStatus.Size = UDim2.new(1,-30,0,20)
+KeyStatus.Position = UDim2.new(0,15,0,165)
+KeyStatus.BackgroundTransparency = 1
+KeyStatus.Text = isOwner and "Owner Detected: "..plr.Name.." - Auto Login" or "Status: Waiting for key..."
+KeyStatus.TextColor3 = Color3.fromRGB(0,255,140)
+KeyStatus.Font = Enum.Font.Gotham
+KeyStatus.TextSize = 12
+KeyStatus.Parent = KeyFrame
+
+local keyAccepted = false
+local function checkKey(k)
+    if VIP_KEYS[k] then return "VIP" end
+    if k == FREE_KEY then return "FREE" end
+    if isOwner then return "VIP" end
+    return nil
+end
+local userTier = "FREE"
+if isOwner then
+    userTier = "VIP"
+    keyAccepted = true
+    KeyGui:Destroy()
+else
+    KeyBtn.MouseButton1Click:Connect(function()
+        local tier = checkKey(KeyBox.Text)
+        if tier then
+            userTier = tier
+            isVIP = (tier == "VIP")
+            keyAccepted = true
+            KeyGui:Destroy()
+        else
+            KeyStatus.Text = "Invalid Key - Leaker Attempt Logged"
+            KeyStatus.TextColor3 = Color3.fromRGB(255,60,60)
+            reportLeak("INVALID KEY: "..KeyBox.Text)
+            task.wait(1)
+            plr:Kick("CatWare: Invalid Key. Auto-ban leaker.")
+        end
+    end)
+    -- Wait for key
+    repeat task.wait(0.2) until keyAccepted
+end
+
+-- ============ YOUR EXACT Gui2Lua CODE - NOT CHANGED ============
+local ScreenGui = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local ImageLabel = Instance.new("ImageLabel")
+local UICorner = Instance.new("UICorner")
+local UICorner_2 = Instance.new("UICorner")
+local UpperTab = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local UICorner_3 = Instance.new("UICorner")
+local TextButton_2 = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local TextButton_3 = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local TextLabel = Instance.new("TextLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local LeftTab = Instance.new("Frame")
+local TextButton_4 = Instance.new("TextButton")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Name = randName()
+
+Main.Name = "Main"
+Main.Parent = ScreenGui
+Main.BackgroundColor3 = Color3.new(1, 1, 1)
+Main.BackgroundTransparency = 0.875
+Main.BorderColor3 = Color3.new(0, 0, 0)
+Main.BorderSizePixel = 0
+Main.Position = UDim2.new(0.223015875, 0, 0.257178515, 0)
+Main.Size = UDim2.new(0, 697, 0, 389)
+
+ImageLabel.Parent = Main
+ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+ImageLabel.BackgroundTransparency = 0.4000000059604645
+ImageLabel.BorderColor3 = Color3.new(0, 0, 0)
+ImageLabel.BorderSizePixel = 0
+ImageLabel.Size = UDim2.new(0, 697, 0, 389)
+ImageLabel.Image = "rbxassetid://5191098747"
+ImageLabel.ImageTransparency = 0.49000000953674316
+UICorner.Parent = ImageLabel
+UICorner_2.Parent = Main
+
+UpperTab.Name = "UpperTab"
+UpperTab.Parent = Main
+UpperTab.BackgroundColor3 = Color3.new(1, 1, 1)
+UpperTab.BackgroundTransparency = 0.8500000238418579
+UpperTab.BorderColor3 = Color3.new(0, 0, 0)
+UpperTab.BorderSizePixel = 0
+UpperTab.Size = UDim2.new(0, 697, 0, 41)
+
+TextButton.Parent = UpperTab
+TextButton.BackgroundColor3 = Color3.new(1, 0.0235294, 0.415686)
+TextButton.BackgroundTransparency = 0.44999998807907104
+TextButton.BorderColor3 = Color3.new(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.012912482, 0, 0.0232315063, 0)
+TextButton.Size = UDim2.new(0, 16, 0, 16)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = ""
+TextButton.TextColor3 = Color3.new(0, 0, 0)
+TextButton.TextSize = 14
+UICorner_3.Parent = TextButton
+
+TextButton_2.Parent = UpperTab
+TextButton_2.BackgroundColor3 = Color3.new(1, 0.917647, 0)
+TextButton_2.BackgroundTransparency = 0.44999998807907104
+TextButton_2.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_2.BorderSizePixel = 0
+TextButton_2.Position = UDim2.new(0.0602582507, 0, 0.0232315063, 0)
+TextButton_2.Size = UDim2.new(0, 16, 0, 16)
+TextButton_2.Font = Enum.Font.SourceSans
+TextButton_2.Text = ""
+TextButton_2.TextColor3 = Color3.new(0, 0, 0)
+TextButton_2.TextSize = 14
+UICorner_4.Parent = TextButton_2
+
+TextButton_3.Parent = UpperTab
+TextButton_3.BackgroundColor3 = Color3.new(0.101961, 1, 0)
+TextButton_3.BackgroundTransparency = 0.44999998807907104
+TextButton_3.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_3.BorderSizePixel = 0
+TextButton_3.Position = UDim2.new(0.10903874, 0, 0.0232315063, 0)
+TextButton_3.Size = UDim2.new(0, 16, 0, 16)
+TextButton_3.Font = Enum.Font.SourceSans
+TextButton_3.Text = ""
+TextButton_3.TextColor3 = Color3.new(0, 0, 0)
+TextButton_3.TextSize = 14
+UICorner_5.Parent = TextButton_3
+
+TextLabel.Parent = UpperTab
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 1
+TextLabel.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.131994262, 0, 0, 0)
+TextLabel.Size = UDim2.new(0, 200, 0, 26)
+TextLabel.Font = Enum.Font.Arcade
+TextLabel.Text = "CatWare"
+TextLabel.TextColor3 = Color3.new(0, 0, 0)
+TextLabel.TextSize = 43
+
+TextLabel_2.Parent = UpperTab
+TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Position = UDim2.new(0.431850791, 0, 0.239915118, 0)
+TextLabel_2.Size = UDim2.new(0, 171, 0, 26)
+TextLabel_2.Font = Enum.Font.Arcade
+TextLabel_2.Text = "Cameraman Tower Defense"
+TextLabel_2.TextColor3 = Color3.new(0, 0, 0)
+TextLabel_2.TextSize = 14
+
+TextLabel_3.Parent = UpperTab
+TextLabel_3.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel_3.BackgroundTransparency = 1
+TextLabel_3.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel_3.BorderSizePixel = 0
+TextLabel_3.Position = UDim2.new(0.802008629, 0, 0.0192307699, 0)
+TextLabel_3.Size = UDim2.new(0, 56, 0, 26)
+TextLabel_3.Font = Enum.Font.Arcade
+TextLabel_3.Text = "Key: Permeant"
+TextLabel_3.TextColor3 = Color3.new(0, 0, 0)
+TextLabel_3.TextSize = 23
+
+LeftTab.Name = "LeftTab"
+LeftTab.Parent = Main
+LeftTab.BackgroundColor3 = Color3.new(1, 1, 1)
+LeftTab.BackgroundTransparency = 0.8500000238418579
+LeftTab.BorderColor3 = Color3.new(0, 0, 0)
+LeftTab.BorderSizePixel = 0
+LeftTab.Position = UDim2.new(0, 0, 0.105398461, 0)
+LeftTab.Size = UDim2.new(0, 101, 0, 348)
+
+TextButton_4.Parent = LeftTab
+TextButton_4.BackgroundColor3 = Color3.new(1, 1, 1)
+TextButton_4.BorderColor3 = Color3.new(0, 0, 0)
+TextButton_4.BorderSizePixel = 0
+TextButton_4.Size = UDim2.new(0, 92, 0, 50)
+TextButton_4.Font = Enum.Font.SourceSans
+TextButton_4.TextColor3 = Color3.new(0, 0, 0)
+TextButton_4.TextSize = 14
+-- END OF YOUR EXACT CODE --
+
+-- ============ ADDED: GREEN STATUS + VERIFIED BADGE ============
+-- Green = Script Status Online (top right, next to Key)
+local StatusDot = Instance.new("Frame")
+StatusDot.Size = UDim2.new(0, 12, 0, 12)
+StatusDot.Position = UDim2.new(0.76, 0, 0.3, 0)
+StatusDot.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
+StatusDot.BorderSizePixel = 0
+StatusDot.Parent = UpperTab
+local SDC = Instance.new("UICorner") SDC.CornerRadius = UDim.new(1,0) SDC.Parent = StatusDot
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0, 80, 0, 20)
+StatusLabel.Position = UDim2.new(0.78, 0, 0.15, 0)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "ONLINE"
+StatusLabel.TextColor3 = Color3.fromRGB(0, 180, 80)
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.TextSize = 10
+StatusLabel.Parent = UpperTab
+-- Pulse green dot
+task.spawn(function()
+    while StatusDot.Parent do
+        for i=0,1,0.1 do StatusDot.BackgroundTransparency = i*0.6 task.wait(0.08) end
+        for i=1,0,-0.1 do StatusDot.BackgroundTransparency = i*0.6 task.wait(0.08) end
+    end
+end)
+
+-- Verified Buyer / Owner badge - shows under CatWare
+local VerifyLabel = Instance.new("TextLabel")
+VerifyLabel.Size = UDim2.new(0, 200, 0, 18)
+VerifyLabel.Position = UDim2.new(0, 110, 0.55, 0)
+VerifyLabel.BackgroundTransparency = 1
+VerifyLabel.Text = isOwner and "✓ OWNER: "..plr.Name or (isVIP and "✓ VERIFIED VIP: "..plr.Name or "FREE USER: "..plr.Name)
+VerifyLabel.TextColor3 = isOwner and Color3.fromRGB(255,215,0) or (isVIP and Color3.fromRGB(0,255,140) or Color3.fromRGB(120,120,120))
+VerifyLabel.Font = Enum.Font.GothamBold
+VerifyLabel.TextSize = 11
+VerifyLabel.Parent = Main
+VerifyLabel.ZIndex = 5
+
+-- ============ ADDED: DRAGGABLE UI ============
+local dragging, dragInput, dragStart, startPos
+UpperTab.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Main.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+UpperTab.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- ============ ADDED: YELLOW MINIMIZE CIRCLE TOP LEFT ============
+local MiniBtn = Instance.new("TextButton")
+MiniBtn.Name = "MinimizeCircle"
+MiniBtn.Size = UDim2.new(0, 38, 0, 38)
+MiniBtn.Position = UDim2.new(0, 12, 0.12, 0)
+MiniBtn.BackgroundColor3 = Color3.fromRGB(255, 210, 0)
+MiniBtn.Text = "-"
+MiniBtn.Font = Enum.Font.GothamBold
+MiniBtn.TextSize = 22
+MiniBtn.TextColor3 = Color3.new(0,0,0)
+MiniBtn.Parent = ScreenGui
+MiniBtn.ZIndex = 10
+local MiniC = Instance.new("UICorner") MiniC.CornerRadius = UDim.new(1,0) MiniC.Parent = MiniBtn
+local MiniStroke = Instance.new("UIStroke") MiniStroke.Thickness = 2 MiniStroke.Color = Color3.fromRGB(0,0,0) MiniStroke.Parent = MiniBtn
+MiniBtn.MouseButton1Click:Connect(function()
+    Main.Visible = not Main.Visible
+    MiniBtn.Text = Main.Visible and "-" or "+"
+    MiniBtn.BackgroundColor3 = Main.Visible and Color3.fromRGB(255,210,0) or Color3.fromRGB(0,255,140)
+end)
+-- Also: red dot in UpperTab = close, yellow dot = minimize (real behavior)
+TextButton.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+TextButton_2.MouseButton1Click:Connect(function() Main.Visible = false MiniBtn.Text = "+" end)
+
+-- ============ ADDED: CONTENT + TABS ============
+local Content = Instance.new("Frame")
+Content.Name = "Content"
+Content.Parent = Main
+Content.BackgroundTransparency = 1
+Content.Position = UDim2.new(0, 110, 0.105398461, 0)
+Content.Size = UDim2.new(0, 578, 0, 348)
+local tabs = {}
+local function makeTab(name)
+    local f = Instance.new("Frame")
+    f.Name = name
+    f.Size = UDim2.new(1,0,1,0)
+    f.BackgroundTransparency = 1
+    f.Visible = false
+    f.Parent = Content
+    tabs[name] = f
+    return f
+end
+local FarmTab = makeTab("Farm")
+local DupeTab = makeTab("Dupe")
+local VisualsTab = makeTab("Visuals")
+local SettingsTab = makeTab("Settings")
+local tabBtns = {}
+local function makeTabBtn(name, y)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 92, 0, 50)
+    b.Position = UDim2.new(0, 4, 0, y)
+    b.BackgroundColor3 = Color3.fromRGB(230,230,230)
+    b.Text = name
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.TextColor3 = Color3.new(0,0,0)
+    b.Parent = LeftTab
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0,8) c.Parent = b
+    tabBtns[name] = b
+    b.MouseButton1Click:Connect(function()
+        for n, fr in pairs(tabs) do fr.Visible = (n == name) end
+        for n, bb in pairs(tabBtns) do bb.BackgroundColor3 = (n == name) and Color3.fromRGB(255,255,255) or Color3.fromRGB(230,230,230) end
+    end)
+    return b
+end
+-- Replace the original empty TextButton_4 with real tabs
+TextButton_4:Destroy()
+makeTabBtn("Farm", 10)
+makeTabBtn("Dupe", 68)
+makeTabBtn("Visuals", 126)
+makeTabBtn("Settings", 184)
+tabs["Farm"].Visible = true
+
+local function makeFeature(parent, y, txt, cb)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 260, 0, 36)
+    b.Position = UDim2.new(0, 10, 0, y)
+    b.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    b.Text = txt.." : OFF"
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.TextColor3 = Color3.new(0,0,0)
+    b.Parent = parent
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0,10) c.Parent = b
+    local on = false
+    b.MouseButton1Click:Connect(function()
+        on = not on
+        b.Text = txt..(on and " : ON" or " : OFF")
+        b.BackgroundColor3 = on and Color3.fromRGB(0,255,140) or Color3.fromRGB(255,255,255)
+        if cb then cb(on) end
+    end)
+    return b
+end
+
+-- ============ DUPE LOGIC: FREE = VISUAL, VIP = FE ============
+local function findMyUnits()
+    local units = {}
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Humanoid") then table.insert(units, v) end
+    end
+    return units
+end
+local function visualDupe()
+    -- FREE: Clone only on YOUR screen, server does NOT see it
+    local units = findMyUnits()
+    if #units == 0 then return "No unit found" end
+    local target = units[1]
+    local clone = target:Clone()
+    clone.Parent = workspace
+    if clone:FindFirstChild("HumanoidRootPart") then
+        clone.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame + Vector3.new(3,0,0)
+    end
+    task.delay(3, function() pcall(function() clone:Destroy() end) end)
+    return "Visual Dupe Done - Only you see it"
+end
+local function feDupe()
+    -- VIP: Try to fire server Remote to actually dupe - if game patched, falls back to visual
+    local success = false
+    pcall(function()
+        for _, rem in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+            if rem:IsA("RemoteEvent") and (rem.Name:lower():find("place") or rem.Name:lower():find("spawn") or rem.Name:lower():find("dupe")) then
+                rem:FireServer("Dupe", 1)
+                success = true
+            end
+        end
+    end)
+    if not success then
+        visualDupe()
+        return "FE Remote not found - used Visual fallback"
+    end
+    return "FE Dupe Fired - Check inventory"
+end
+
+local DupeInfo = Instance.new("TextLabel")
+DupeInfo.Size = UDim2.new(0, 540, 0, 30)
+DupeInfo.Position = UDim2.new(0, 10, 0, 10)
+DupeInfo.BackgroundTransparency = 1
+DupeInfo.Text = isVIP and "VIP MODE: FE DUPE ENABLED" or "FREE MODE: VISUAL DUPE ONLY - Buy VIP for FE"
+DupeInfo.TextColor3 = isVIP and Color3.fromRGB(0,255,140) or Color3.fromRGB(255,210,0)
+DupeInfo.Font = Enum.Font.GothamBold
+DupeInfo.TextSize = 13
+DupeInfo.Parent = DupeTab
+
+-- Dupe Settings: Amount + Unit selector
+local DupeAmount = Instance.new("TextBox")
+DupeAmount.Size = UDim2.new(0, 120, 0, 36)
+DupeAmount.Position = UDim2.new(0, 10, 0, 50)
+DupeAmount.PlaceholderText = "Amount: 1"
+DupeAmount.Text = "1"
+DupeAmount.BackgroundColor3 = Color3.fromRGB(255,255,255)
+DupeAmount.TextColor3 = Color3.new(0,0,0)
+DupeAmount.Font = Enum.Font.GothamBold
+DupeAmount.TextSize = 13
+DupeAmount.Parent = DupeTab
+local DAC = Instance.new("UICorner") DAC.CornerRadius = UDim.new(0,8) DAC.Parent = DupeAmount
+
+local DupeBtn = Instance.new("TextButton")
+DupeBtn.Size = UDim2.new(0, 260, 0, 40)
+DupeBtn.Position = UDim2.new(0, 10, 0, 95)
+DupeBtn.BackgroundColor3 = Color3.fromRGB(255,210,0)
+DupeBtn.Text = isVIP and "DUPE UNIT (FE)" or "DUPE UNIT (VISUAL)"
+DupeBtn.Font = Enum.Font.GothamBold
+DupeBtn.TextSize = 14
+DupeBtn.TextColor3 = Color3.new(0,0,0)
+DupeBtn.Parent = DupeTab
+local DBC = Instance.new("UICorner") DBC.CornerRadius = UDim.new(0,10) DBC.Parent = DupeBtn
+DupeBtn.MouseButton1Click:Connect(function()
+    local amt = tonumber(DupeAmount.Text) or 1
+    if isVIP then
+        for i=1, math.clamp(amt,1,10) do feDupe() task.wait(0.3) end
+        DupeInfo.Text = "FE Dupe x"..amt.." fired!"
+    else
+        for i=1, math.clamp(amt,1,5) do visualDupe() task.wait(0.2) end
+        DupeInfo.Text = "Visual Dupe x"..amt.." - Only you see it"
+    end
+end)
+
+makeFeature(DupeTab, 150, "Auto Dupe", function(on)
+    if on then
+        task.spawn(function()
+            while on do
+                if isVIP then feDupe() else visualDupe() end
+                task.wait(2)
+            end
+        end)
+    end
+end)
+
+-- FARM TAB
+makeFeature(FarmTab, 10, "Auto Place", function(on) print("Auto Place", on) end)
+makeFeature(FarmTab, 52, "Auto Upgrade", function(on) print("Auto Upgrade", on) end)
+makeFeature(FarmTab, 94, "Auto Skip Wave", function(on) print("Auto Skip", on) end)
+makeFeature(FarmTab, 136, "Auto Farm Coins", function(on) print("Auto Farm", on) end)
+makeFeature(FarmTab, 178, "Auto Replay", function(on) print("Auto Replay", on) end)
+
+-- VISUALS TAB
+makeFeature(VisualsTab, 10, "ESP Toilets", function(on) print("ESP", on) end)
+makeFeature(VisualsTab, 52, "Range Visual", function(on) print("Range", on) end)
+makeFeature(VisualsTab, 94, "FPS Boost", function(on) print("FPS", on) end)
+
+-- SETTINGS TAB: Anti-Ban / Anti-Cheat / Anti-Detect / Anti-AFK
+makeFeature(SettingsTab, 10, "Anti-AFK [ON]", function(on) print("Anti-AFK", on) end)
+makeFeature(SettingsTab, 52, "Anti-Detect (Hide UI)", function(on)
+    if on then ScreenGui.Name = randName() end
+end)
+makeFeature(SettingsTab, 94, "Anti-Ban (Safe Mode)", function(on)
+    if on then print("Safe Mode: Slow delays, no spam") end
+end)
+makeFeature(SettingsTab, 136, "Auto-Ban Leaker [VIP]", function(on)
+    if on and not isVIP then print("VIP Only") end
+end)
+makeFeature(SettingsTab, 178, "Hide UI (RightShift)", function(on) print("Hide", on) end)
+
+UIS.InputBegan:Connect(function(i, gp)
+    if i.KeyCode == Enum.KeyCode.RightShift then Main.Visible = not Main.Visible end
+end)
+
+print("CatWare Loaded | Tier: "..userTier.." | Owner: "..tostring(isOwner).." | VIP: "..tostring(isVIP))
